@@ -1,0 +1,27 @@
+plugins:
+  crimson_community_enabled:
+    default: true
+    client: false
+  crimson_online_window_minutes:
+    default: 5
+    min: 1
+    max: 30
+    client: false
+  crimson_online_members_limit:
+    default: 24
+    min: 4
+    max: 100
+    client: false
+  crimson_profile_visitors_enabled:
+    default: true
+    client: false
+  crimson_profile_visitors_limit:
+    default: 24
+    min: 4
+    max: 100
+    client: false
+  crimson_profile_visitors_retention_days:
+    default: 90
+    min: 1
+    max: 365
+    client: false

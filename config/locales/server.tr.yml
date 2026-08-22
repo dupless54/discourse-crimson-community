@@ -1,0 +1,8 @@
+tr:
+  site_settings:
+    crimson_community_enabled: "Crimson Channels çevrimiçi üye ve profil ziyaretçisi servislerini etkinleştir."
+    crimson_online_window_minutes: "Bir üyeyi çevrimiçi saymak için son etkinlik penceresi (dakika)."
+    crimson_online_members_limit: "Çevrimiçi üye uç noktasının döndüreceği en yüksek kullanıcı sayısı."
+    crimson_profile_visitors_enabled: "Profil ziyaretlerini kaydet ve profil ziyaretçi listesini göster."
+    crimson_profile_visitors_limit: "Bir profil için döndürülecek en yüksek ziyaretçi sayısı."
+    crimson_profile_visitors_retention_days: "Profil ziyaretlerinin saklanacağı gün sayısı."
