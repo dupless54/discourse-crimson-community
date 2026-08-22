@@ -2,7 +2,7 @@
 
 # name: discourse-crimson-community
 # about: Provides live online members and profile-visitor history for the senin.me Crimson Channels theme.
-# version: 1.0.1
+# version: 1.0.2
 # authors: TSKEliteForces
 # url: https://github.com/TSKEliteForces/discourse-crimson-community
 # required_version: 3.3.0
@@ -23,11 +23,9 @@ module ::CrimsonCommunity
 end
 
 after_initialize do
-  require_relative "app/models/crimson_community/profile_visit"
   require_relative "lib/crimson_community/user_presenter"
   require_relative "app/controllers/crimson_community/presence_controller"
   require_relative "app/controllers/crimson_community/profile_visits_controller"
-  require_relative "app/jobs/scheduled/crimson_community_cleanup_profile_visits"
 
   register_presence_channel_prefix("crimson-community") do |channel_name|
     next unless channel_name == CrimsonCommunity::ONLINE_CHANNEL
@@ -82,12 +80,5 @@ after_initialize do
     @crimson_online_channel ||=
       PresenceChannel.new(CrimsonCommunity::ONLINE_CHANNEL)
     PresenceChannelStateSerializer.new(@crimson_online_channel.state, root: nil)
-  end
-
-  on(:user_destroyed) do |user|
-    CrimsonCommunity::ProfileVisit
-      .where(profile_user_id: user.id)
-      .or(CrimsonCommunity::ProfileVisit.where(visitor_user_id: user.id))
-      .delete_all
   end
 end
