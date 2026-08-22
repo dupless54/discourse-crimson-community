@@ -10,15 +10,5 @@ module ::CrimsonCommunity
     validates :profile_user_id, presence: true
     validates :visitor_user_id, presence: true, uniqueness: { scope: :profile_user_id }
     validates :last_visited_at, presence: true
-    validate :visitor_is_not_profile_owner
-
-    private
-
-    def visitor_is_not_profile_owner
-      return if profile_user_id.blank? || visitor_user_id.blank?
-      return if profile_user_id != visitor_user_id
-
-      errors.add(:visitor_user_id, "cannot be the profile owner")
-    end
   end
 end

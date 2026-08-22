@@ -1,7 +1,7 @@
 en:
   site_settings:
     crimson_community_enabled: "Enable the online-member and profile-visitor services used by Crimson Channels."
-    crimson_online_window_minutes: "Recent-activity window used to consider a member online, in minutes."
+    crimson_online_window_minutes: "Live presence timeout used to keep a member online, in minutes."
     crimson_online_members_limit: "Maximum number of members returned by the online endpoint."
     crimson_profile_visitors_enabled: "Record profile visits and expose the recent visitor list."
     crimson_profile_visitors_limit: "Maximum number of recent visitors returned for a profile."

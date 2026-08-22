@@ -7,14 +7,22 @@ module ::CrimsonCommunity
 
     def index
       ensure_feature_enabled!
-      render_visitor_list(find_profile_user!)
+      profile_user = find_profile_user!
+      # The read request is also the reliable visit signal for the theme. This
+      # keeps visits working when a browser extension or an older Discourse
+      # build strips the separate POST's CSRF header, and intentionally records
+      # a member viewing their own profile as requested by the theme.
+      record_visit!(profile_user)
+      response.headers["Cache-Control"] = "no-store"
+      render_visitor_list(profile_user)
     end
 
     def create
       ensure_feature_enabled!
       profile_user = find_profile_user!
-      record_visit!(profile_user) if profile_user.id != current_user.id
+      record_visit!(profile_user)
 
+      response.headers["Cache-Control"] = "no-store"
       render json: success_json
     end
 
