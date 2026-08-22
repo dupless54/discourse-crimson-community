@@ -11,9 +11,17 @@ It also exposes the member's uploaded profile-cover URL to the theme's user-card
 serializer, allowing the compact card to use the real profile cover instead of
 the fallback gradient.
 
-Profile visits are stored once per visitor/profile pair and refreshed at most once
-per minute. The profile owner's own visits are retained as well. A daily job
-removes records older than the configured retention period.
+Profile visits use Discourse's own `UserProfileView` records instead of a
+plugin-specific database table. The profile owner's own visits are retained as
+well. The endpoint groups repeated views by member, returns the latest visit,
+and applies the configured retention period while reading the list.
+
+## 1.0.2
+
+- Replaced the plugin-specific profile-visit table with Discourse 2026.8's
+  built-in `UserProfileView` store.
+- Fixed the `500 Internal Server Error` returned by the profile-visitors endpoint
+  when the old plugin migration/table was unavailable.
 
 ## Installation
 
