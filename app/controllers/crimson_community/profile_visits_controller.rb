@@ -49,42 +49,44 @@ module ::CrimsonCommunity
     end
 
     def record_visit!(profile_user)
-      now = Time.zone.now
-      visit =
-        CrimsonCommunity::ProfileVisit.find_or_initialize_by(
-          profile_user_id: profile_user.id,
-          visitor_user_id: current_user.id,
-        )
-
-      return if visit.persisted? && visit.last_visited_at >= 1.minute.ago
-
-      visit.last_visited_at = now
-      visit.save!
-    rescue ActiveRecord::RecordNotUnique
-      CrimsonCommunity::ProfileVisit
-        .where(profile_user_id: profile_user.id, visitor_user_id: current_user.id)
-        .update_all(last_visited_at: now, updated_at: now)
+      UserProfileView.add(
+        profile_user.user_profile.id,
+        request.remote_ip,
+        current_user.id,
+      )
     end
 
     def render_visitor_list(profile_user)
       limit = SiteSetting.crimson_profile_visitors_limit.to_i.clamp(4, 100)
       retention_days =
         SiteSetting.crimson_profile_visitors_retention_days.to_i.clamp(1, 365)
-      visits =
-        CrimsonCommunity::ProfileVisit
-          .where(profile_user_id: profile_user.id)
-          .where("last_visited_at >= ?", retention_days.days.ago)
-          .joins(:visitor)
-          .merge(User.real.activated.not_staged.not_suspended)
-          .includes(:visitor)
-          .order(last_visited_at: :desc)
+      visitor_rows =
+        UserProfileView
+          .where(user_profile_id: profile_user.user_profile.id)
+          .where.not(user_id: nil)
+          .where("viewed_at >= ?", retention_days.days.ago)
+          .group(:user_id)
+          .order(Arel.sql("MAX(viewed_at) DESC"))
           .limit(limit)
+          .pluck(:user_id, Arel.sql("MAX(viewed_at)"))
+
+      users_by_id =
+        User
+          .real
+          .activated
+          .not_staged
+          .not_suspended
+          .where(id: visitor_rows.map(&:first))
+          .index_by(&:id)
 
       users =
-        visits.map do |visit|
+        visitor_rows.filter_map do |visitor_id, last_visited_at|
+          visitor = users_by_id[visitor_id]
+          next unless visitor
+
           CrimsonCommunity::UserPresenter.serialize(
-            visit.visitor,
-            last_visited_at: visit.last_visited_at,
+            visitor,
+            last_visited_at: last_visited_at,
           )
         end
 
