@@ -3,8 +3,8 @@
 # name: discourse-crimson-community
 # about: Provides live online members and profile-visitor history for the senin.me Crimson Channels theme.
 # version: 1.0.2
-# authors: TSKEliteForces
-# url: https://github.com/TSKEliteForces/discourse-crimson-community
+# authors: ErespawN
+# url: https://github.com/dupless54/discourse-crimson-community
 # required_version: 3.3.0
 
 enabled_site_setting :crimson_community_enabled
