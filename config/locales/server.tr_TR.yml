@@ -1,4 +1,4 @@
-tr:
+tr_TR:
   site_settings:
     crimson_community_enabled: "Crimson Channels çevrimiçi üye ve profil ziyaretçisi servislerini etkinleştir."
     crimson_online_window_minutes: "Canlı presence sinyali alan bir üyeyi çevrimiçi tutma süresi (dakika)."
