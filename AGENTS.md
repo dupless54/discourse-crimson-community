@@ -29,3 +29,6 @@ Follow current Discourse PresenceChannel, Guardian, serializer, route, and plugi
 Stop for unresolved privacy/product/schema/security decisions. Preserve unrelated work and `.claude/settings.local.json`; no destructive Git/deploy/DB actions. Remote writes only when explicitly authorized. Prefer targeted source ranges/diffs over broad scans.
 
 Task procedures live under `.agents/skills/` and load on demand; use `task-packet` for non-trivial work.
+
+## Adaptive model / effort routing
+Classify execution risk with `docs/ai/EFFORT_ROUTER.md` before broad reads. Start at the lowest sufficient tier: T0 mechanical, T1 routine, T2 high-risk, T3 exceptional. Escalate for risk/ambiguity rather than task size, and de-escalate when the risky phase ends. Use platform-native workers under `.claude/agents/` or `.codex/agents/` when supported; never trade away correctness, privacy, security, or validation to save tokens.
