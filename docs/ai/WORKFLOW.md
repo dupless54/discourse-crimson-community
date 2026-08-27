@@ -1,0 +1,2 @@
+# Multi-model quality workflow
+Default: Claude Builder -> ChatGPT/Codex independent Reviewer -> Gemini mandatory Final Verifier. Reviewer independently uses locked task + rules + latest diff + test/CI evidence. Privacy/schema/security changes use the matching specialist skill. Merge only after all approvals, exact-path validation, and latest exact PR-head CI green; disagreement requires human arbitration.
