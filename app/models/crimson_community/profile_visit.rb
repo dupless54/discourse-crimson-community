@@ -12,3 +12,21 @@ module ::CrimsonCommunity
     validates :last_visited_at, presence: true
   end
 end
+
+# == Schema Information
+#
+# Table name: crimson_community_profile_visits
+#
+#  id              :bigint           not null, primary key
+#  last_visited_at :datetime         not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  profile_user_id :integer          not null
+#  visitor_user_id :integer          not null
+#
+# Indexes
+#
+#  idx_crimson_profile_visits_recent   (profile_user_id,last_visited_at)
+#  idx_crimson_profile_visits_unique   (profile_user_id,visitor_user_id) UNIQUE
+#  idx_crimson_profile_visits_visitor  (visitor_user_id)
+#
