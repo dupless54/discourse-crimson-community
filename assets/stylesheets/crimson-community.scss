@@ -1,0 +1,212 @@
+.crimson-community-page {
+  padding-bottom: 3em;
+  color: var(--primary);
+}
+
+.crimson-community-page__header {
+  display: flex;
+  padding: 1.5em 0 1em;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5em;
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-page__header h1,
+.crimson-community-members__header h2,
+.crimson-community-empty h2 {
+  margin: 0;
+  color: var(--primary);
+}
+
+.crimson-community-page__header h1 {
+  font-size: var(--font-up-3);
+  line-height: 1.2;
+}
+
+.crimson-community-page__header > div > p:last-child {
+  max-width: 68ch;
+  margin: 0.5em 0 0;
+  color: var(--primary-medium);
+  line-height: 1.5;
+}
+
+.crimson-community-page__eyebrow {
+  margin: 0 0 0.3em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.crimson-community-summary {
+  display: flex;
+  margin: 1em 0;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+}
+
+.crimson-community-summary__item {
+  display: flex;
+  min-height: 3.5em;
+  padding: 0.8em 1em;
+  align-items: center;
+  gap: 0.45em;
+  border-inline-end: 1px solid var(--primary-low);
+}
+
+.crimson-community-summary__item:last-child {
+  border-inline-end: 0;
+}
+
+.crimson-community-summary__item strong {
+  font-size: var(--font-up-1);
+}
+
+.crimson-community-summary__item > span:last-child {
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+}
+
+.crimson-community-presence-dot {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  flex: 0 0 auto;
+  background: var(--success);
+  border-radius: 50%;
+}
+
+.crimson-community-members {
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+}
+
+.crimson-community-members__header {
+  display: flex;
+  padding: 0.85em 1em;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  background: var(--primary-very-low);
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-members__header h2 {
+  font-size: var(--font-up-1);
+}
+
+.crimson-community-members__header > span {
+  min-width: 2em;
+  padding: 0.2em 0.45em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  text-align: center;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+  border-radius: 1em;
+}
+
+.crimson-community-member-row {
+  display: flex;
+  min-height: 4.5em;
+  padding: 0.85em 1em;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-member-row:last-child {
+  border-bottom: 0;
+}
+
+.crimson-community-member-row:hover {
+  background: var(--primary-very-low);
+}
+
+.crimson-community-member-row .user-info {
+  min-width: 0;
+}
+
+.crimson-community-member-row__state {
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 0.35em 0.55em;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  background: var(--primary-very-low);
+  border: 1px solid var(--primary-low);
+  border-radius: 1em;
+}
+
+.crimson-community-empty {
+  display: grid;
+  min-height: 14em;
+  padding: 2em 1em;
+  place-items: center;
+  align-content: center;
+  color: var(--primary-medium);
+  text-align: center;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+}
+
+.crimson-community-empty__icon {
+  margin-bottom: 0.4em;
+  font-size: var(--font-up-4);
+}
+
+.crimson-community-empty p {
+  max-width: 48ch;
+  margin: 0.4em 0 0;
+}
+
+@media (max-width: 700px) {
+  .crimson-community-page {
+    padding-bottom: 2em;
+  }
+
+  .crimson-community-page__header {
+    padding-top: 1em;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .crimson-community-page__header h1 {
+    font-size: var(--font-up-2);
+  }
+
+  .crimson-community-page__header > .btn {
+    width: max-content;
+  }
+
+  .crimson-community-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .crimson-community-summary__item {
+    padding: 0.7em;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.2em;
+  }
+
+  .crimson-community-summary__item .crimson-community-presence-dot {
+    margin-bottom: 0.15em;
+  }
+
+  .crimson-community-member-row {
+    padding: 0.75em;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .crimson-community-member-row__state {
+    margin-inline-start: 3.25em;
+  }
+}

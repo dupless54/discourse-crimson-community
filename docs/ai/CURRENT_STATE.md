@@ -1,4 +1,7 @@
 # Current state
-Main baseline at context setup: `4a790cd414100dcc11eb234066b630bfa473f869`.
 
-No active multi-session packet was recorded at setup. Before new work inspect current branch/PR/source/tests. Durable privacy boundary: hidden presence stays hidden, profile-visit access is server-authoritative, and theme-facing serializer data remains minimal.
+Crimson Community provides authenticated online-presence and profile-visitor services plus the stable profile-background serializer contract used by Crimson Channels.
+
+The native `/community` route is a first-party-style Discourse view over the existing authorized online-presence endpoint. It uses the standard `wrap` shell, core `DUserInfo`, the Community sidebar plugin API, Discourse theme variables, responsive layout, and client locales. It does not change profile-visitor behavior, schema, presence authorization, or the JSON response contract.
+
+Minimum Token Context v3 is integrated with frontend scoped rules under `docs/ai/scopes/frontend/`. AI reviewer approvals are advisory only; delivery requires latest exact-head official Discourse CI per `WORKFLOW.md` plus explicit task-level merge authorization.

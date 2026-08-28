@@ -1,0 +1,15 @@
+en:
+  js:
+    crimson_community:
+      page:
+        title: "Community"
+        eyebrow: "Community"
+        description: "See members who are active right now, using Discourse's live presence data."
+        all_members: "All members"
+        summary_label: "Community activity summary"
+        online_now: "online now"
+        minute_window: "minute activity window"
+        online_members: "Online members"
+        online: "Online"
+        empty_title: "Nobody is online yet"
+        empty_description: "Active members will appear here when Discourse receives their presence signal."
