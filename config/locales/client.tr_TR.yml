@@ -1,0 +1,15 @@
+tr_TR:
+  js:
+    crimson_community:
+      page:
+        title: "Topluluk"
+        eyebrow: "Topluluk"
+        description: "Discourse'un canlı presence verisini kullanarak şu anda aktif olan üyeleri görün."
+        all_members: "Tüm üyeler"
+        summary_label: "Topluluk etkinlik özeti"
+        online_now: "şu anda çevrimiçi"
+        minute_window: "dakikalık etkinlik aralığı"
+        online_members: "Çevrimiçi üyeler"
+        online: "Çevrimiçi"
+        empty_title: "Henüz çevrimiçi kimse yok"
+        empty_description: "Discourse presence sinyali aldığında aktif üyeler burada görünecek."
