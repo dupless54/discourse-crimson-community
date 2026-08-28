@@ -11,7 +11,13 @@ It adds authenticated community services and a native Discourse community page:
 
 The `/community` page intentionally reuses the existing authorized presence endpoint instead of creating a second privacy or presence model. Hidden-presence rules remain server-authoritative, and the page links to Discourse's built-in member directory for full member discovery.
 
-Profile visits use Discourse's own `UserProfileView` records instead of a plugin-specific database table. The profile owner's own visits are retained as well. The endpoint groups repeated views by member, returns the latest visit, and applies the configured retention period while reading the list.
+Profile visits use Discourse's own `UserProfileView` records instead of a plugin-specific database table. The profile owner's own visits are retained as well. The endpoint groups repeated views by member, returns the latest visit, and applies the configured retention period while reading the list. Profile access is checked with Discourse's Guardian before a visit is recorded or visitor history is returned.
+
+## 1.1.1
+
+- Exposed the plugin enable flag to the client so the native Community sidebar link can be registered reliably.
+- Stopped anonymous route transitions after opening Discourse's sign-in flow.
+- Enforced Discourse Guardian profile visibility before recording or returning profile visits, with request coverage for hidden profiles.
 
 ## 1.1.0
 
@@ -33,4 +39,4 @@ The theme does not label page-local guesses as live data. Cross-user online and 
 - `GET /crimson-community/profile-visits/:username.json`
 - `POST /crimson-community/profile-visits/:username.json`
 
-All JSON service endpoints require a signed-in Discourse user. The `/community` client route prompts anonymous visitors to sign in before loading presence data.
+All JSON service endpoints require a signed-in Discourse user. Profile-visit endpoints also require Discourse Guardian permission to view the target profile. The `/community` client route prompts anonymous visitors to sign in before loading presence data.

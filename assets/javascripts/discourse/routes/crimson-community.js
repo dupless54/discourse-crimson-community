@@ -9,6 +9,7 @@ export default class CrimsonCommunityRoute extends DiscourseRoute {
   beforeModel(transition) {
     if (!this.currentUser) {
       transition.send("showLogin");
+      return;
     }
   }
 

@@ -45,6 +45,7 @@ module ::CrimsonCommunity
 
       raise Discourse::NotFound unless user
 
+      guardian.ensure_can_see_profile!(user)
       user
     end
 
