@@ -7,6 +7,9 @@ describe CrimsonCommunity::ProfileVisitsController do
   before do
     SiteSetting.crimson_community_enabled = true
     SiteSetting.crimson_profile_visitors_enabled = true
+    # Keep Discourse's unrelated new-user profile hiding out of these
+    # controller contract tests. Hidden-profile behavior is exercised below.
+    SiteSetting.hide_new_user_profiles = false
     sign_in(viewer)
   end
 
