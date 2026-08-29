@@ -1,36 +1,84 @@
-# discourse-crimson-community
+<p align="center">
+  <a href="https://buymeacoffee.com/erespawn">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" width="217" height="60">
+  </a>
+</p>
 
-Companion plugin for the **senin.me Crimson Channels** Discourse theme.
+# Discourse Crimson Community
 
-It adds authenticated community services and a native Discourse community page:
+A companion Discourse plugin for the **Crimson Channels** theme. It provides authenticated community services and a native Discourse community page without replacing Discourse's privacy or presence rules.
 
-- `/community` — first-party-style, responsive online-member view using Discourse's normal header/sidebar, theme variables, core user UI, and Community sidebar integration;
-- live members, based on Discourse's `user_seen` event and PresenceChannel;
-- recent visitors for the profile currently being viewed;
-- a stable profile-cover serializer field used by the Crimson Channels user card.
+## Current Features
 
-The `/community` page intentionally reuses the existing authorized presence endpoint instead of creating a second privacy or presence model. Hidden-presence rules remain server-authoritative, and the page links to Discourse's built-in member directory for full member discovery.
+- Native `/community` page using the standard Discourse application shell, header, sidebar, theme variables, and responsive layout.
+- Online-member presentation backed by Discourse presence/user activity data.
+- Recent profile-visitor history backed by Discourse's existing `UserProfileView` records.
+- Stable `crimson_profile_background_url` presentation contract for the Crimson Channels user-card experience.
+- Community sidebar integration through supported Discourse plugin APIs.
+- Core `DUserInfo` presentation for member rows instead of a standalone user-list implementation.
+- English and Turkish client localization.
+- Light/dark-mode compatibility through Discourse theme variables.
 
-Profile visits use Discourse's own `UserProfileView` records instead of a plugin-specific database table. The profile owner's own visits are retained as well. The endpoint groups repeated views by member, returns the latest visit, and applies the configured retention period while reading the list.
+## Privacy Model
 
-## 1.1.0
+Privacy and visibility decisions remain server-authoritative:
 
-- Added the native `/community` page and Community sidebar entry.
-- Reused core `DUserInfo`, `wrap`, theme variables, and current plugin route/sidebar APIs instead of standalone page chrome.
-- Added English and Turkish client locales and responsive light/dark-compatible styling.
-- Integrated Minimum Token Context v3 handoff/frontend scope and CI-first reviewer policy.
-- Added the official reusable Discourse Plugin CI workflow and Discourse RuboCop scaffold.
+- users with hidden presence are not exposed through the online-member contract;
+- profile-visitor services are authenticated;
+- the `/community` page consumes the existing authorized presence API rather than creating a second presence model;
+- public serializer fields are intentionally limited to presentation data needed by the Crimson UI.
 
-## Installation
-
-Install the plugin in the normal Discourse `plugins` directory, rebuild the app, then install or update the matching Crimson Channels theme. Settings are available under Admin → Settings → Plugins by searching for `crimson_community`.
-
-The theme does not label page-local guesses as live data. Cross-user online and profile-visitor lists therefore require this plugin.
-
-## Endpoints
+## Service Endpoints
 
 - `GET /crimson-community/online.json`
 - `GET /crimson-community/profile-visits/:username.json`
 - `POST /crimson-community/profile-visits/:username.json`
 
-All JSON service endpoints require a signed-in Discourse user. The `/community` client route prompts anonymous visitors to sign in before loading presence data.
+The JSON service endpoints require an authenticated Discourse user.
+
+## Recent Development Highlights
+
+### Shipped on `main`
+
+- Native first-party-style `/community` experience.
+- Community sidebar entry.
+- Responsive light/dark presentation.
+- English/Turkish client locales.
+- Reuse of the existing authorized online-presence contract.
+- Official Discourse Plugin CI and token-efficient repository development guidance.
+
+### In progress — not yet on `main`
+
+PR #7, **Community runtime and profile privacy hardening**, is currently open. Its scope includes tighter profile-visibility checks for visit recording/history and cleaner client runtime behavior. These changes should not be treated as shipped until that PR is merged.
+
+## Installation
+
+Add the plugin to your Discourse container configuration:
+
+```yaml
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          - git clone https://github.com/dupless54/discourse-crimson-community.git
+```
+
+Rebuild Discourse:
+
+```bash
+cd /var/discourse
+./launcher rebuild app
+```
+
+Then enable the Crimson Community plugin in site settings. Install the matching [`discourse-crimson-channels`](https://github.com/dupless54/discourse-crimson-channels) theme if you want the full Crimson visual experience.
+
+## Architecture
+
+Crimson Community owns community-related server truth. Crimson Channels is a theme consumer of its public JSON/presentation seams. Authorization, profile visibility, and presence privacy must never be moved into theme-side JavaScript.
+
+For repository-specific development rules, see [`AGENTS.md`](AGENTS.md).
+
+## Support
+
+If this plugin is useful to your community, you can support continued development through the Buy Me a Coffee banner at the top of this README.
