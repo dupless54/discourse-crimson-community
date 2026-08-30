@@ -16,11 +16,14 @@ class CrimsonCommunityPage extends Component {
   @tracked snapshot = this.args.initialSnapshot;
   @tracked visitors = this.args.initialSnapshot?.profile_visitors;
   @tracked query = "";
+  @tracked sortMode = "recent";
+  @tracked density = "comfortable";
   @tracked isRefreshing = false;
   @tracked refreshFailed = false;
   @tracked isRefreshingVisitors = false;
   @tracked visitorRefreshFailed = false;
   @tracked showAllVisitors = false;
+  @tracked dashboardRefreshOutcome = null;
 
   get users() {
     return Array.isArray(this.snapshot?.users) ? this.snapshot.users : [];
@@ -58,6 +61,22 @@ class CrimsonCommunityPage extends Component {
     return this.isRefreshing || this.isRefreshingVisitors;
   }
 
+  get dashboardRefreshPartial() {
+    return this.dashboardRefreshOutcome === "partial";
+  }
+
+  get dashboardRefreshFailed() {
+    return this.dashboardRefreshOutcome === "failed";
+  }
+
+  get isComfortableDensity() {
+    return this.density === "comfortable";
+  }
+
+  get isCompactDensity() {
+    return this.density === "compact";
+  }
+
   get normalizedQuery() {
     return this.query.trim().toLowerCase();
   }
@@ -68,16 +87,33 @@ class CrimsonCommunityPage extends Component {
 
   get filteredUsers() {
     const query = this.normalizedQuery;
+    const filtered = query
+      ? this.users.filter((user) => {
+          const username = String(user?.username || "").toLowerCase();
+          const name = String(user?.name || "").toLowerCase();
 
-    if (!query) {
-      return this.users;
+          return username.includes(query) || name.includes(query);
+        })
+      : [...this.users];
+
+    if (this.sortMode === "recent") {
+      return filtered;
     }
 
-    return this.users.filter((user) => {
-      const username = String(user?.username || "").toLowerCase();
-      const name = String(user?.name || "").toLowerCase();
+    return filtered.sort((left, right) => {
+      if (this.sortMode === "username") {
+        return String(left?.username || "").localeCompare(
+          String(right?.username || ""),
+          undefined,
+          { sensitivity: "base" },
+        );
+      }
 
-      return username.includes(query) || name.includes(query);
+      const leftLabel = String(left?.name || left?.username || "");
+      const rightLabel = String(right?.name || right?.username || "");
+      return leftLabel.localeCompare(rightLabel, undefined, {
+        sensitivity: "base",
+      });
     });
   }
 
@@ -87,8 +123,23 @@ class CrimsonCommunityPage extends Component {
   }
 
   @action
+  updateSort(event) {
+    this.sortMode = event.target.value;
+  }
+
+  @action
   clearQuery() {
     this.query = "";
+  }
+
+  @action
+  useComfortableDensity() {
+    this.density = "comfortable";
+  }
+
+  @action
+  useCompactDensity() {
+    this.density = "compact";
   }
 
   @action
@@ -96,10 +147,9 @@ class CrimsonCommunityPage extends Component {
     this.showAllVisitors = !this.showAllVisitors;
   }
 
-  @action
-  async refreshSnapshot() {
+  async performSnapshotRefresh() {
     if (this.isRefreshing) {
-      return;
+      return !this.refreshFailed;
     }
 
     this.isRefreshing = true;
@@ -107,17 +157,18 @@ class CrimsonCommunityPage extends Component {
 
     try {
       this.snapshot = await ajax("/crimson-community/online.json");
+      return true;
     } catch {
       this.refreshFailed = true;
+      return false;
     } finally {
       this.isRefreshing = false;
     }
   }
 
-  @action
-  async refreshVisitors() {
+  async performVisitorRefresh() {
     if (this.isRefreshingVisitors) {
-      return;
+      return !this.visitorRefreshFailed;
     }
 
     this.isRefreshingVisitors = true;
@@ -126,16 +177,45 @@ class CrimsonCommunityPage extends Component {
     try {
       this.visitors = await ajax("/crimson-community/profile-visits.json");
       this.showAllVisitors = false;
+      return true;
     } catch {
       this.visitorRefreshFailed = true;
+      return false;
     } finally {
       this.isRefreshingVisitors = false;
     }
   }
 
   @action
+  async refreshSnapshot() {
+    this.dashboardRefreshOutcome = null;
+    await this.performSnapshotRefresh();
+  }
+
+  @action
+  async refreshVisitors() {
+    this.dashboardRefreshOutcome = null;
+    await this.performVisitorRefresh();
+  }
+
+  @action
   async refreshDashboard() {
-    await Promise.all([this.refreshSnapshot(), this.refreshVisitors()]);
+    if (this.isRefreshingDashboard) {
+      return;
+    }
+
+    this.dashboardRefreshOutcome = null;
+
+    const [presenceSucceeded, visitorsSucceeded] = await Promise.all([
+      this.performSnapshotRefresh(),
+      this.performVisitorRefresh(),
+    ]);
+
+    if (!presenceSucceeded && !visitorsSucceeded) {
+      this.dashboardRefreshOutcome = "failed";
+    } else if (!presenceSucceeded || !visitorsSucceeded) {
+      this.dashboardRefreshOutcome = "partial";
+    }
   }
 
   <template>
@@ -214,6 +294,26 @@ class CrimsonCommunityPage extends Component {
         </div>
       </aside>
 
+      {{#if this.dashboardRefreshPartial}}
+        <div
+          class="crimson-community-page__status crimson-community-page__status--warning"
+          role="status"
+          data-test-community-refresh-partial
+        >
+          {{dIcon "circle-exclamation"}}
+          <span>{{i18n "crimson_community.page.dashboard_refresh_partial"}}</span>
+        </div>
+      {{else if this.dashboardRefreshFailed}}
+        <div
+          class="crimson-community-page__status crimson-community-page__status--error"
+          role="alert"
+          data-test-community-refresh-all-error
+        >
+          {{dIcon "circle-exclamation"}}
+          <span>{{i18n "crimson_community.page.dashboard_refresh_failed"}}</span>
+        </div>
+      {{/if}}
+
       {{#if this.refreshFailed}}
         <div
           class="crimson-community-page__status crimson-community-page__status--error"
@@ -225,7 +325,11 @@ class CrimsonCommunityPage extends Component {
         </div>
       {{/if}}
 
-      <div class="crimson-community-dashboard" data-test-community-dashboard>
+      <div
+        class="crimson-community-dashboard"
+        data-density={{this.density}}
+        data-test-community-dashboard
+      >
         {{#if this.users.length}}
           <section
             class="crimson-community-members crimson-community-dashboard__primary"
@@ -268,6 +372,69 @@ class CrimsonCommunityPage extends Component {
                   data-test-community-search
                   {{on "input" this.updateQuery}}
                 />
+              </div>
+
+              <div class="crimson-community-members__preferences">
+                <div class="crimson-community-members__sort-field">
+                  <label for="crimson-community-member-sort">
+                    {{i18n "crimson_community.page.sort_label"}}
+                  </label>
+                  <select
+                    id="crimson-community-member-sort"
+                    class="crimson-community-members__sort-select"
+                    value={{this.sortMode}}
+                    data-test-community-sort
+                    {{on "change" this.updateSort}}
+                  >
+                    <option value="recent">
+                      {{i18n "crimson_community.page.sort_recent"}}
+                    </option>
+                    <option value="name">
+                      {{i18n "crimson_community.page.sort_name"}}
+                    </option>
+                    <option value="username">
+                      {{i18n "crimson_community.page.sort_username"}}
+                    </option>
+                  </select>
+                </div>
+
+                <div
+                  class="crimson-community-density"
+                  role="group"
+                  aria-label={{i18n "crimson_community.page.density_label"}}
+                >
+                  <span class="crimson-community-density__label">
+                    {{i18n "crimson_community.page.density_label"}}
+                  </span>
+                  <div class="crimson-community-density__buttons">
+                    <button
+                      type="button"
+                      class={{if
+                        this.isComfortableDensity
+                        "btn btn-default is-active"
+                        "btn btn-default"
+                      }}
+                      aria-pressed={{this.isComfortableDensity}}
+                      data-test-community-density-comfortable
+                      {{on "click" this.useComfortableDensity}}
+                    >
+                      {{i18n "crimson_community.page.density_comfortable"}}
+                    </button>
+                    <button
+                      type="button"
+                      class={{if
+                        this.isCompactDensity
+                        "btn btn-default is-active"
+                        "btn btn-default"
+                      }}
+                      aria-pressed={{this.isCompactDensity}}
+                      data-test-community-density-compact
+                      {{on "click" this.useCompactDensity}}
+                    >
+                      {{i18n "crimson_community.page.density_compact"}}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div class="crimson-community-members__actions">
