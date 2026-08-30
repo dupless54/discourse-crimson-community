@@ -1,72 +1,59 @@
+@use "lib/viewport";
+
 .crimson-community-page {
-  padding-bottom: 3em;
+  padding-bottom: 2.5em;
   color: var(--primary);
 }
 
 .crimson-community-page__header {
   display: flex;
-  padding: 1.5em 0 1em;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5em;
+  padding: 1.25em 0 1em;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 1em;
   border-bottom: 1px solid var(--primary-low);
 }
 
-.crimson-community-page__header h1,
+.crimson-community-page__heading {
+  min-width: 0;
+}
+
+.crimson-community-page__heading h1,
 .crimson-community-members__header h2,
 .crimson-community-empty h2 {
   margin: 0;
   color: var(--primary);
 }
 
-.crimson-community-page__header h1 {
-  font-size: var(--font-up-3);
+.crimson-community-page__heading h1 {
+  font-size: var(--font-up-2);
   line-height: 1.2;
 }
 
-.crimson-community-page__header > div > p:last-child {
+.crimson-community-page__heading > p {
   max-width: 68ch;
-  margin: 0.5em 0 0;
+  margin: 0.55em 0 0;
   color: var(--primary-medium);
   line-height: 1.5;
 }
 
-.crimson-community-page__eyebrow {
-  margin: 0 0 0.3em;
+.crimson-community-page__live-label {
+  display: inline-flex;
+  margin-bottom: 0.45em;
+  padding: 0.25em 0.55em;
+  align-items: center;
+  gap: 0.4em;
   color: var(--primary-medium);
   font-size: var(--font-down-2);
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.crimson-community-summary {
-  display: flex;
-  margin: 1em 0;
-  background: var(--secondary);
+  background: var(--primary-very-low);
   border: 1px solid var(--primary-low);
+  border-radius: 1em;
 }
 
-.crimson-community-summary__item {
-  display: flex;
-  min-height: 3.5em;
-  padding: 0.8em 1em;
-  align-items: center;
-  gap: 0.45em;
-  border-inline-end: 1px solid var(--primary-low);
-}
-
-.crimson-community-summary__item:last-child {
-  border-inline-end: 0;
-}
-
-.crimson-community-summary__item strong {
-  font-size: var(--font-up-1);
-}
-
-.crimson-community-summary__item > span:last-child {
-  color: var(--primary-medium);
-  font-size: var(--font-down-1);
+.crimson-community-page__directory-link {
+  width: max-content;
+  max-width: 100%;
 }
 
 .crimson-community-presence-dot {
@@ -78,28 +65,124 @@
   border-radius: 50%;
 }
 
+.crimson-community-summary {
+  display: grid;
+  margin: 1em 0;
+  grid-template-columns: 1fr;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+  border-radius: 0.5em;
+  overflow: hidden;
+}
+
+.crimson-community-summary__item {
+  display: flex;
+  min-width: 0;
+  min-height: 4.25em;
+  padding: 0.85em 1em;
+  align-items: center;
+  gap: 0.75em;
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-summary__item:last-child {
+  border-bottom: 0;
+}
+
+.crimson-community-summary__icon {
+  display: inline-grid;
+  width: 2.25em;
+  height: 2.25em;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--primary-medium);
+  background: var(--primary-very-low);
+  border-radius: 50%;
+}
+
+.crimson-community-summary__item > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.1em;
+}
+
+.crimson-community-summary__item strong {
+  color: var(--primary);
+  font-size: var(--font-up-1);
+  line-height: 1.2;
+}
+
+.crimson-community-summary__item span:last-child {
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+}
+
+.crimson-community-privacy-note {
+  display: flex;
+  margin: 0 0 1em;
+  padding: 0.85em 1em;
+  align-items: flex-start;
+  gap: 0.75em;
+  color: var(--primary-medium);
+  background: var(--primary-very-low);
+  border: 1px solid var(--primary-low);
+  border-radius: 0.5em;
+}
+
+.crimson-community-privacy-note__icon {
+  display: inline-grid;
+  width: 2em;
+  height: 2em;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.crimson-community-privacy-note strong {
+  color: var(--primary);
+}
+
+.crimson-community-privacy-note p {
+  margin: 0.2em 0 0;
+  line-height: 1.45;
+}
+
 .crimson-community-members {
   background: var(--secondary);
   border: 1px solid var(--primary-low);
+  border-radius: 0.5em;
+  overflow: hidden;
 }
 
 .crimson-community-members__header {
   display: flex;
-  padding: 0.85em 1em;
-  align-items: center;
+  padding: 0.9em 1em;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1em;
   background: var(--primary-very-low);
   border-bottom: 1px solid var(--primary-low);
 }
 
+.crimson-community-members__header > div {
+  min-width: 0;
+}
+
 .crimson-community-members__header h2 {
   font-size: var(--font-up-1);
 }
 
-.crimson-community-members__header > span {
+.crimson-community-members__header p {
+  margin: 0.25em 0 0;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  line-height: 1.4;
+}
+
+.crimson-community-members__count {
   min-width: 2em;
-  padding: 0.2em 0.45em;
+  padding: 0.2em 0.5em;
+  flex: 0 0 auto;
   color: var(--primary-medium);
   font-size: var(--font-down-2);
   text-align: center;
@@ -111,10 +194,10 @@
 .crimson-community-member-row {
   display: flex;
   min-height: 4.5em;
-  padding: 0.85em 1em;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1em;
+  padding: 0.8em 1em;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.55em;
   border-bottom: 1px solid var(--primary-low);
 }
 
@@ -122,18 +205,19 @@
   border-bottom: 0;
 }
 
-.crimson-community-member-row:hover {
+.crimson-community-member-row:focus-within {
   background: var(--primary-very-low);
 }
 
 .crimson-community-member-row .user-info {
+  width: 100%;
   min-width: 0;
 }
 
 .crimson-community-member-row__state {
   display: inline-flex;
-  flex: 0 0 auto;
-  padding: 0.35em 0.55em;
+  margin-inline-start: 3.25em;
+  padding: 0.3em 0.55em;
   align-items: center;
   gap: 0.4em;
   color: var(--primary-medium);
@@ -143,9 +227,20 @@
   border-radius: 1em;
 }
 
+.crimson-community-members__more {
+  display: flex;
+  padding: 0.75em 1em;
+  align-items: center;
+  gap: 0.55em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  background: var(--primary-very-low);
+  border-top: 1px solid var(--primary-low);
+}
+
 .crimson-community-empty {
   display: grid;
-  min-height: 14em;
+  min-height: 15em;
   padding: 2em 1em;
   place-items: center;
   align-content: center;
@@ -153,60 +248,75 @@
   text-align: center;
   background: var(--secondary);
   border: 1px solid var(--primary-low);
+  border-radius: 0.5em;
 }
 
 .crimson-community-empty__icon {
-  margin-bottom: 0.4em;
-  font-size: var(--font-up-4);
+  display: inline-grid;
+  width: 2.75em;
+  height: 2.75em;
+  margin-bottom: 0.5em;
+  place-items: center;
+  font-size: var(--font-up-2);
+  background: var(--primary-very-low);
+  border-radius: 50%;
 }
 
 .crimson-community-empty p {
   max-width: 48ch;
-  margin: 0.4em 0 0;
+  margin: 0.45em 0 1em;
+  line-height: 1.45;
 }
 
-@media (max-width: 700px) {
+@include viewport.from(sm) {
   .crimson-community-page {
-    padding-bottom: 2em;
+    padding-bottom: 3em;
   }
 
   .crimson-community-page__header {
-    padding-top: 1em;
-    align-items: stretch;
-    flex-direction: column;
+    padding-top: 1.5em;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 1.5em;
   }
 
-  .crimson-community-page__header h1 {
-    font-size: var(--font-up-2);
+  .crimson-community-page__heading h1 {
+    font-size: var(--font-up-3);
   }
 
-  .crimson-community-page__header > .btn {
-    width: max-content;
+  .crimson-community-page__directory-link {
+    flex: 0 0 auto;
   }
 
   .crimson-community-summary {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .crimson-community-summary__item {
-    padding: 0.7em;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.2em;
+    border-bottom: 0;
+    border-inline-end: 1px solid var(--primary-low);
   }
 
-  .crimson-community-summary__item .crimson-community-presence-dot {
-    margin-bottom: 0.15em;
+  .crimson-community-summary__item:last-child {
+    border-inline-end: 0;
   }
 
   .crimson-community-member-row {
-    padding: 0.75em;
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 1em;
   }
 
   .crimson-community-member-row__state {
-    margin-inline-start: 3.25em;
+    margin-inline-start: 0;
+    flex: 0 0 auto;
+  }
+}
+
+@media (hover: hover) {
+  .crimson-community-member-row:hover {
+    background: var(--primary-very-low);
   }
 }
