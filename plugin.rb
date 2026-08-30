@@ -2,7 +2,7 @@
 
 # name: discourse-crimson-community
 # about: senin.me Crimson Channels teması için canlı çevrimiçi üyeler ve profil ziyaretçisi geçmişi sağlar.
-# version: 1.3.0
+# version: 1.4.0
 # authors: ErespawN
 # url: https://github.com/dupless54/discourse-crimson-community
 # required_version: 3.3.0
@@ -59,6 +59,7 @@ after_initialize do
 
     defaults format: :json do
       get "/crimson-community/online" => "crimson_community/presence#index"
+      get "/crimson-community/profile-visits" => "crimson_community/profile_visits#mine"
       get "/crimson-community/profile-visits/:username" => "crimson_community/profile_visits#index"
       post "/crimson-community/profile-visits/:username" => "crimson_community/profile_visits#create"
     end
