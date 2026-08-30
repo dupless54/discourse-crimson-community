@@ -4,8 +4,8 @@ en:
       page:
         title: "Community"
         eyebrow: "Community"
-        live_label: "Live community"
-        description: "See members who are active right now through Discourse's live presence system."
+        live_label: "Current activity"
+        description: "See members currently included in Discourse's presence activity window."
         all_members: "All members"
         summary_label: "Community activity summary"
         online_now: "online now"
