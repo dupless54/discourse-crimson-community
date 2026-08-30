@@ -17,33 +17,17 @@ module ::CrimsonCommunity
         channel.present(user_id: current_user.id, client_id: "seen")
       end
 
-      serialized_state =
-        PresenceChannelStateSerializer.new(channel.state, root: nil).as_json
-      state_users = serialized_state[:users] || serialized_state["users"] || []
-      online_user_ids =
-        state_users
-          .filter_map { |user| (user[:id] || user["id"]).to_i.presence }
-          .uniq
-
-      users_by_id =
-        User
-          .real
-          .activated
-          .not_staged
-          .not_suspended
-          .where(id: online_user_ids)
-          .index_by(&:id)
-      users =
-        online_user_ids
-          .filter_map { |user_id| users_by_id[user_id] }
-          .sort_by { |user| user.last_seen_at || Time.at(0) }
-          .reverse
-          .first(limit)
+      snapshot = CrimsonCommunity::PresenceSnapshot.new(channel)
+      users = snapshot.ordered_users.first(limit)
+      total_count = snapshot.total_count
 
       response.headers["Cache-Control"] = "no-store"
       render json: {
                users: users.map { |user| CrimsonCommunity::UserPresenter.serialize(user) },
                count: users.length,
+               total_count: total_count,
+               remaining_count: [total_count - users.length, 0].max,
+               limit: limit,
                window_minutes: window_minutes,
                generated_at: Time.zone.now,
              }

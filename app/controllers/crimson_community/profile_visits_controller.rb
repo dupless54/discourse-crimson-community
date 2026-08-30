@@ -44,6 +44,7 @@ module ::CrimsonCommunity
           .find_by(username_lower: username)
 
       raise Discourse::NotFound unless user
+      raise Discourse::NotFound unless guardian.can_see_profile?(user)
 
       user
     end
@@ -58,6 +59,7 @@ module ::CrimsonCommunity
 
     def render_visitor_list(profile_user)
       limit = SiteSetting.crimson_profile_visitors_limit.to_i.clamp(4, 100)
+      candidate_limit = [limit * 3, 300].min
       retention_days =
         SiteSetting.crimson_profile_visitors_retention_days.to_i.clamp(1, 365)
       visitor_rows =
@@ -67,7 +69,7 @@ module ::CrimsonCommunity
           .where("viewed_at >= ?", retention_days.days.ago)
           .group(:user_id)
           .order(Arel.sql("MAX(viewed_at) DESC"))
-          .limit(limit)
+          .limit(candidate_limit)
           .pluck(:user_id, Arel.sql("MAX(viewed_at)"))
 
       users_by_id =
@@ -80,19 +82,24 @@ module ::CrimsonCommunity
           .index_by(&:id)
 
       users =
-        visitor_rows.filter_map do |visitor_id, last_visited_at|
-          visitor = users_by_id[visitor_id]
-          next unless visitor
+        visitor_rows
+          .filter_map do |visitor_id, last_visited_at|
+            visitor = users_by_id[visitor_id]
+            next unless visitor
+            next unless guardian.can_see_profile?(visitor)
 
-          CrimsonCommunity::UserPresenter.serialize(
-            visitor,
-            last_visited_at: last_visited_at,
-          )
-        end
+            CrimsonCommunity::UserPresenter.serialize(
+              visitor,
+              last_visited_at: last_visited_at,
+            )
+          end
+          .first(limit)
 
       render json: {
                profile_username: profile_user.username,
                users: users,
+               count: users.length,
+               limit: limit,
                retention_days: retention_days,
                generated_at: Time.zone.now,
              }
