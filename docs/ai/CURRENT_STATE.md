@@ -2,7 +2,9 @@
 
 Crimson Community provides authenticated online-presence and profile-visitor services plus the stable profile-background serializer contract used by Crimson Channels.
 
-The native `/community` route is a first-party-style Discourse view over the authorized online-presence endpoint. It uses the standard `wrap` shell, core `DUserInfo`, the Community sidebar plugin API, Discourse theme variables, responsive viewport helpers, and client locales. The page now distinguishes total eligible online members from the configured list limit and explains the server-authoritative privacy behavior without moving authorization into Ember.
+The native `/community` route is a first-party-style Discourse view over the authorized online-presence endpoint. It uses the standard `wrap` shell, core `DUserInfo`, the Community sidebar plugin API, Discourse theme variables, responsive viewport helpers, and client locales. The page distinguishes total eligible online members from the configured list limit, explains server-authoritative privacy behavior, supports local name/username filtering of the already-authorized snapshot, and can manually refresh that same snapshot without introducing a second presence/search contract.
+
+Manual refresh keeps the last successful snapshot visible if the request fails and exposes translated, accessible failure feedback. Search never queries hidden/global users: it only filters the `users` array already returned by `/crimson-community/online.json`.
 
 Presence state is filtered again against active Discourse users and `hide_presence` before either the `/online.json` response or `crimson_online_state` site serializer is exposed. This prevents stale PresenceChannel entries from leaking a member after they hide presence. The existing response fields remain available; list metadata is additive.
 
