@@ -13,6 +13,8 @@ A companion Discourse plugin for the **Crimson Channels** theme. It provides aut
 - Native `/community` page using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
 - Online-member presentation backed by Discourse PresenceChannel data with an additional privacy-safe snapshot filter before output.
 - Separate total-online, displayed-member, and activity-window summaries without changing the existing `users`, `count`, or `window_minutes` contract.
+- Client-side name/username search across the already-authorized online snapshot.
+- Manual Community snapshot refresh with loading feedback and failure recovery that keeps the previous authorized list visible.
 - Recent profile-visitor history backed by Discourse's existing `UserProfileView` records.
 - Guardian-based profile visibility for both visitor targets and members returned in visitor history.
 - Stable `crimson_profile_background_url` presentation contract for the Crimson Channels user-card experience.
@@ -31,6 +33,7 @@ Privacy and visibility decisions remain on the server:
 - a hidden/private target profile returns not found before a visit is persisted;
 - visitor history does not expose members whose profiles the current viewer cannot see;
 - the `/community` page consumes the authorized presence API rather than creating a second presence model;
+- Community search only filters the authorized snapshot already returned by the server and cannot discover hidden members;
 - public serializer fields remain intentionally limited to presentation data required by Crimson UI integrations.
 
 ## Service Endpoints
@@ -43,16 +46,14 @@ All JSON service endpoints require an authenticated Discourse user. Profile-visi
 
 The online response keeps the established `users`, `count`, `window_minutes`, and `generated_at` fields and adds `total_count`, `remaining_count`, and `limit` so clients can distinguish the complete eligible presence snapshot from the configured list cap.
 
-## Version 1.2.0 Highlights
+## Version 1.3.0 Highlights
 
-- Refreshed the full native Community page information hierarchy and responsive styling.
-- Switched Community responsive rules to Discourse's current viewport helper approach.
-- Fixed the Community sidebar enable setting so the client receives only the boolean it needs.
-- Hardened stale presence-state filtering for both the endpoint and site serializer.
-- Hardened profile-visitor target visibility and visitor-list privacy.
-- Added bounded visitor candidate filtering and explicit response metadata.
-- Added request/unit coverage for hidden profiles and stale hidden presence.
-- Preserved the existing Crimson Channels endpoint and serializer integration seams.
+- Added native Community member search by display name or username without introducing a new search endpoint.
+- Added manual snapshot refresh using the existing authorized `/online.json` contract.
+- Added refresh loading state and recoverable error feedback while preserving the previous successful snapshot.
+- Added a filtered-list empty state and responsive interaction toolbar.
+- Expanded English/Turkish client copy and frontend acceptance coverage for search, refresh, and refresh failure.
+- Preserved all 1.2.0 presence/privacy/profile-visitor contracts without backend or database changes.
 
 ## Installation
 
@@ -80,7 +81,7 @@ Then enable the Crimson Community plugin in site settings. Install the matching 
 
 Crimson Community owns community-related server truth. Crimson Channels is a theme consumer of its public JSON and serializer seams. Authorization, profile visibility, and presence privacy must never be moved into theme-side JavaScript.
 
-The plugin intentionally continues to use Discourse's `UserProfileView` records for active profile-visitor behavior. The historical plugin-specific profile-visit table is not migrated or repurposed by the 1.2.0 refresh.
+The plugin intentionally continues to use Discourse's `UserProfileView` records for active profile-visitor behavior. The historical plugin-specific profile-visit table is not migrated or repurposed by this release.
 
 For repository-specific development rules, see [`AGENTS.md`](AGENTS.md).
 
