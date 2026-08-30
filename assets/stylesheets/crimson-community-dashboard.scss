@@ -1,0 +1,82 @@
+@use "lib/viewport";
+
+.crimson-community-page__header-actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.crimson-community-page__header-actions .btn {
+  margin: 0;
+}
+
+.crimson-community-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1em;
+}
+
+.crimson-community-dashboard__primary,
+.crimson-community-dashboard__secondary {
+  min-width: 0;
+}
+
+.crimson-community-dashboard__secondary.crimson-community-visitors {
+  margin-bottom: 0;
+}
+
+.crimson-community-panel-meta {
+  display: flex;
+  margin-top: 0.45em;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+}
+
+.crimson-community-panel-meta .d-icon {
+  flex: 0 0 auto;
+}
+
+.crimson-community-visitors__list-toggle {
+  display: flex;
+  padding: 0.65em 1em;
+  justify-content: center;
+  background: var(--secondary);
+  border-top: 1px solid var(--primary-low);
+}
+
+.crimson-community-visitors__list-toggle .btn {
+  margin: 0;
+}
+
+@include viewport.from(sm) {
+  .crimson-community-page__header-actions {
+    width: auto;
+    justify-content: flex-end;
+  }
+}
+
+@include viewport.from(md) {
+  .crimson-community-dashboard {
+    grid-template-columns: minmax(0, 2fr) minmax(18em, 1fr);
+  }
+
+  .crimson-community-dashboard__secondary {
+    position: sticky;
+    top: calc(var(--header-offset, 0px) + 1em);
+  }
+
+  .crimson-community-dashboard__secondary .crimson-community-visitor-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .crimson-community-dashboard__secondary .crimson-community-visitor-row__time {
+    margin-inline-start: 3.25em;
+  }
+}
