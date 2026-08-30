@@ -136,6 +136,17 @@ class CrimsonCommunityPage extends Component {
         </div>
       </aside>
 
+      {{#if this.refreshFailed}}
+        <div
+          class="crimson-community-page__status crimson-community-page__status--error"
+          role="alert"
+          data-test-community-refresh-error
+        >
+          {{dIcon "circle-exclamation"}}
+          <span>{{i18n "crimson_community.page.refresh_error"}}</span>
+        </div>
+      {{/if}}
+
       {{#if this.users.length}}
         <section
           class="crimson-community-members"
@@ -191,17 +202,6 @@ class CrimsonCommunityPage extends Component {
               />
             </div>
           </div>
-
-          {{#if this.refreshFailed}}
-            <div
-              class="crimson-community-members__status crimson-community-members__status--error"
-              role="alert"
-              data-test-community-refresh-error
-            >
-              {{dIcon "circle-exclamation"}}
-              <span>{{i18n "crimson_community.page.refresh_error"}}</span>
-            </div>
-          {{/if}}
 
           {{#if this.filteredUsers.length}}
             <div class="crimson-community-members__list">
