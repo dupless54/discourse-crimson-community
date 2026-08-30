@@ -6,27 +6,32 @@
 
 # Discourse Crimson Community
 
-A companion Discourse plugin for the **Crimson Channels** theme. It provides authenticated community services and a native Discourse community page without replacing Discourse's privacy or presence rules.
+A companion Discourse plugin for the **Crimson Channels** theme. It provides authenticated community services and a native Discourse community page while keeping privacy, profile visibility, and presence authorization server-authoritative.
 
 ## Current Features
 
-- Native `/community` page using the standard Discourse application shell, header, sidebar, theme variables, and responsive layout.
-- Online-member presentation backed by Discourse presence/user activity data.
+- Native `/community` page using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
+- Online-member presentation backed by Discourse PresenceChannel data with an additional privacy-safe snapshot filter before output.
+- Separate total-online, displayed-member, and activity-window summaries without changing the existing `users`, `count`, or `window_minutes` contract.
 - Recent profile-visitor history backed by Discourse's existing `UserProfileView` records.
+- Guardian-based profile visibility for both visitor targets and members returned in visitor history.
 - Stable `crimson_profile_background_url` presentation contract for the Crimson Channels user-card experience.
-- Community sidebar integration through supported Discourse plugin APIs.
+- Privacy-filtered `crimson_online_state` site serializer for theme integrations.
+- Community sidebar integration through the supported Discourse plugin API.
 - Core `DUserInfo` presentation for member rows instead of a standalone user-list implementation.
 - English and Turkish client localization.
 - Light/dark-mode compatibility through Discourse theme variables.
 
 ## Privacy Model
 
-Privacy and visibility decisions remain server-authoritative:
+Privacy and visibility decisions remain on the server:
 
-- users with hidden presence are not exposed through the online-member contract;
-- profile-visitor services are authenticated;
-- the `/community` page consumes the existing authorized presence API rather than creating a second presence model;
-- public serializer fields are intentionally limited to presentation data needed by the Crimson UI.
+- users with `hide_presence` enabled are removed from online output even when an older PresenceChannel state still contains them;
+- profile-visitor services require authentication;
+- a hidden/private target profile returns not found before a visit is persisted;
+- visitor history does not expose members whose profiles the current viewer cannot see;
+- the `/community` page consumes the authorized presence API rather than creating a second presence model;
+- public serializer fields remain intentionally limited to presentation data required by Crimson UI integrations.
 
 ## Service Endpoints
 
@@ -34,22 +39,20 @@ Privacy and visibility decisions remain server-authoritative:
 - `GET /crimson-community/profile-visits/:username.json`
 - `POST /crimson-community/profile-visits/:username.json`
 
-The JSON service endpoints require an authenticated Discourse user.
+All JSON service endpoints require an authenticated Discourse user. Profile-visit endpoints also apply Discourse Guardian profile visibility before persistence or serialization.
 
-## Recent Development Highlights
+The online response keeps the established `users`, `count`, `window_minutes`, and `generated_at` fields and adds `total_count`, `remaining_count`, and `limit` so clients can distinguish the complete eligible presence snapshot from the configured list cap.
 
-### Shipped on `main`
+## Version 1.2.0 Highlights
 
-- Native first-party-style `/community` experience.
-- Community sidebar entry.
-- Responsive light/dark presentation.
-- English/Turkish client locales.
-- Reuse of the existing authorized online-presence contract.
-- Official Discourse Plugin CI and token-efficient repository development guidance.
-
-### In progress — not yet on `main`
-
-PR #7, **Community runtime and profile privacy hardening**, is currently open. Its scope includes tighter profile-visibility checks for visit recording/history and cleaner client runtime behavior. These changes should not be treated as shipped until that PR is merged.
+- Refreshed the full native Community page information hierarchy and responsive styling.
+- Switched Community responsive rules to Discourse's current viewport helper approach.
+- Fixed the Community sidebar enable setting so the client receives only the boolean it needs.
+- Hardened stale presence-state filtering for both the endpoint and site serializer.
+- Hardened profile-visitor target visibility and visitor-list privacy.
+- Added bounded visitor candidate filtering and explicit response metadata.
+- Added request/unit coverage for hidden profiles and stale hidden presence.
+- Preserved the existing Crimson Channels endpoint and serializer integration seams.
 
 ## Installation
 
@@ -75,7 +78,9 @@ Then enable the Crimson Community plugin in site settings. Install the matching 
 
 ## Architecture
 
-Crimson Community owns community-related server truth. Crimson Channels is a theme consumer of its public JSON/presentation seams. Authorization, profile visibility, and presence privacy must never be moved into theme-side JavaScript.
+Crimson Community owns community-related server truth. Crimson Channels is a theme consumer of its public JSON and serializer seams. Authorization, profile visibility, and presence privacy must never be moved into theme-side JavaScript.
+
+The plugin intentionally continues to use Discourse's `UserProfileView` records for active profile-visitor behavior. The historical plugin-specific profile-visit table is not migrated or repurposed by the 1.2.0 refresh.
 
 For repository-specific development rules, see [`AGENTS.md`](AGENTS.md).
 
