@@ -10,12 +10,15 @@ A companion Discourse plugin for the **Crimson Channels** theme. It provides aut
 
 ## Current Features
 
-- Native `/community` page using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
+- Native `/community` dashboard using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
+- Responsive dashboard composition: online members remain the primary panel while the signed-in user's profile visitors become a compact secondary panel on wider screens and stack naturally on mobile.
 - Online-member presentation backed by Discourse PresenceChannel data with an additional privacy-safe snapshot filter before output.
 - Separate total-online, displayed-member, and activity-window summaries without changing the existing `users`, `count`, or `window_minutes` contract.
 - Client-side name/username search across the already-authorized online snapshot.
-- Manual Community snapshot refresh with loading feedback and failure recovery that keeps the previous authorized list visible.
+- Independent online and visitor refresh controls plus a single dashboard-wide refresh action that refreshes both existing authorized data sources.
+- Freshness metadata for both presence and profile-visitor snapshots using each endpoint's existing `generated_at` timestamp.
 - Native Community profile-visitor panel for the signed-in user's own history, including visit timestamps, retention context, disabled/unavailable states, and independent refresh.
+- Compact visitor preview showing the first six authorized visitors with an explicit show-all/show-fewer control for longer histories.
 - Recent profile-visitor history backed by Discourse's existing `UserProfileView` records.
 - Guardian-based profile visibility for both visitor targets and members returned in visitor history.
 - Stable `crimson_profile_background_url` presentation contract for the Crimson Channels user-card experience.
@@ -35,8 +38,9 @@ Privacy and visibility decisions remain on the server:
 - visitor history does not expose members whose profiles the current viewer cannot see;
 - the Community visitor panel uses a current-user-only read endpoint whose target is derived from the authenticated session, avoiding username/IDOR selection and avoiding synthetic self-visits;
 - the existing username profile-visit endpoint keeps its visit-recording behavior for profile/theme integrations;
-- the `/community` page consumes the authorized presence API rather than creating a second presence model;
+- the `/community` dashboard only composes the existing authorized presence and current-user visitor responses and does not create a new member discovery or activity API;
 - Community search only filters the authorized snapshot already returned by the server and cannot discover hidden members;
+- visitor preview expansion is client-side only and never requests or reveals accounts beyond the already-authorized visitor response;
 - public serializer fields remain intentionally limited to presentation data required by Crimson UI integrations.
 
 ## Service Endpoints
@@ -50,15 +54,15 @@ All JSON service endpoints require an authenticated Discourse user. Username-tar
 
 The online response keeps the established `users`, `count`, `window_minutes`, and `generated_at` fields and adds `total_count`, `remaining_count`, and `limit` so clients can distinguish the complete eligible presence snapshot from the configured list cap.
 
-## Version 1.4.0 Highlights
+## Version 1.5.0 Highlights
 
-- Added a native "Your profile visitors" panel to `/community` with core `DUserInfo`, `DButton`, and current Discourse date formatting.
-- Added a read-only, current-user-only visitor-history endpoint so Community page loads never create synthetic self-visits.
-- Kept the existing username-targeted GET/POST tracking contract unchanged for profile/theme integrations.
-- Added independent visitor refresh with loading state, failure recovery, disabled state, and an initial-load fallback that does not break online Community features.
-- Kept Guardian filtering server-authoritative for every visitor returned to the client.
-- Expanded request and frontend acceptance coverage for current-user targeting, hidden visitors, disabled visitor history, refresh success/failure, and degraded loading.
-- No database migration or new persistence model was introduced.
+- Reworked `/community` into a responsive personal dashboard without adding a new backend data source or privacy surface.
+- Added a dashboard-wide refresh action that refreshes online presence and the signed-in user's visitor history together while preserving each panel's independent refresh and failure handling.
+- Added visible snapshot freshness metadata using the existing server-provided `generated_at` fields.
+- Added a six-member compact visitor preview with explicit show-all/show-fewer controls for longer authorized histories.
+- Added a two-column desktop/tablet composition with a primary online-member panel and secondary profile-visitor panel; mobile remains single-column.
+- Kept all 1.4.0 Guardian, presence, visitor-tracking, endpoint, persistence, and server-only setting contracts unchanged.
+- Added dedicated acceptance coverage for dashboard refresh, freshness metadata, and visitor preview expansion.
 
 ## Installation
 
