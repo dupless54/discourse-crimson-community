@@ -12,6 +12,78 @@ describe CrimsonCommunity::ProfileVisitsController do
     sign_in(viewer)
   end
 
+  describe "GET /crimson-community/profile-visits.json" do
+    it "returns the current user's visitor history without recording a self visit" do
+      UserProfileView.add(
+        viewer.user_profile.id,
+        "127.0.0.2",
+        profile_user.id,
+      )
+
+      expect do
+        get "/crimson-community/profile-visits.json"
+      end.not_to change {
+        UserProfileView.where(user_profile_id: viewer.user_profile.id).count
+      }
+
+      expect(response.status).to eq(200)
+      expect(response.parsed_body["enabled"]).to eq(true)
+      expect(response.parsed_body["profile_username"]).to eq(viewer.username)
+      expect(response.parsed_body["users"].map { |user| user["username"] }).to include(
+        profile_user.username,
+      )
+    end
+
+    it "does not expose hidden visitors in the current user's history" do
+      SiteSetting.allow_users_to_hide_profile = true
+      UserProfileView.add(
+        viewer.user_profile.id,
+        "127.0.0.2",
+        profile_user.id,
+      )
+      UserProfileView.add(
+        viewer.user_profile.id,
+        "127.0.0.3",
+        hidden_visitor.id,
+      )
+      hidden_visitor.user_option.update!(hide_profile: true)
+
+      get "/crimson-community/profile-visits.json"
+
+      expect(response.status).to eq(200)
+      expect(response.parsed_body["users"].map { |user| user["username"] }).to include(
+        profile_user.username,
+      )
+      expect(response.parsed_body["users"].map { |user| user["username"] }).not_to include(
+        hidden_visitor.username,
+      )
+    end
+
+    it "returns a disabled state without visitor data when profile visitors are disabled" do
+      SiteSetting.crimson_profile_visitors_enabled = false
+
+      expect do
+        get "/crimson-community/profile-visits.json"
+      end.not_to change {
+        UserProfileView.where(user_profile_id: viewer.user_profile.id).count
+      }
+
+      expect(response.status).to eq(200)
+      expect(response.parsed_body["enabled"]).to eq(false)
+      expect(response.parsed_body["profile_username"]).to eq(viewer.username)
+      expect(response.parsed_body["users"]).to eq([])
+      expect(response.parsed_body["count"]).to eq(0)
+    end
+
+    it "returns not found when Crimson Community is disabled" do
+      SiteSetting.crimson_community_enabled = false
+
+      get "/crimson-community/profile-visits.json"
+
+      expect(response.status).to eq(404)
+    end
+  end
+
   describe "GET /crimson-community/profile-visits/:username.json" do
     it "returns the visitor list for a visible profile" do
       get "/crimson-community/profile-visits/#{profile_user.username}.json"
