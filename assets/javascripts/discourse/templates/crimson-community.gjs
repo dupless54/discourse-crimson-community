@@ -31,7 +31,7 @@ export default RouteTemplate(
       >
         <article class="crimson-community-summary__item">
           <span class="crimson-community-summary__icon" aria-hidden="true">
-            {{dIcon "signal"}}
+            {{dIcon "circle-check"}}
           </span>
           <div>
             <strong>{{@model.total_count}}</strong>
@@ -41,7 +41,7 @@ export default RouteTemplate(
 
         <article class="crimson-community-summary__item">
           <span class="crimson-community-summary__icon" aria-hidden="true">
-            {{dIcon "user-group"}}
+            {{dIcon "users"}}
           </span>
           <div>
             <strong>{{@model.count}}</strong>
