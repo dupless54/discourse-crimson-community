@@ -4,8 +4,8 @@ tr_TR:
       page:
         title: "Topluluk"
         eyebrow: "Topluluk"
-        live_label: "Canlı topluluk"
-        description: "Discourse'un canlı presence sistemi üzerinden şu anda aktif olan üyeleri görün."
+        live_label: "Anlık etkinlik"
+        description: "Discourse'un presence etkinlik aralığında şu anda görünen üyeleri inceleyin."
         all_members: "Tüm üyeler"
         summary_label: "Topluluk etkinlik özeti"
         online_now: "şu anda çevrimiçi"
