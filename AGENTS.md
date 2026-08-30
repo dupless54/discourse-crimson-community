@@ -31,10 +31,14 @@ The plugin page must feel like part of Discourse: use the standard `wrap` shell,
 ## Implementation and tests
 Follow current Discourse PresenceChannel, Guardian, serializer, route, frontend, and plugin APIs verified from source. Keep authorization server-side and changes small. Test visible/hidden presence, unauthorized/private profile access, target/user edge cases, and query behavior relevant to the change. Never claim unrun tests passed.
 
-## Delivery gate
-AI reviewer approval from Claude, Gemini, ChatGPT/Codex, or another model is advisory only and is not a merge gate. For a PR, require the latest exact PR head to have the official `Discourse Plugin` CI GREEN and any separately configured required Discourse-owned `Discourse CI` check GREEN. Missing, stale, skipped, or older-head CI is not GREEN. A new commit invalidates prior CI evidence. Merge still requires explicit task-level user authorization.
+## CI-only delivery gate
+Claude/Gemini/Codex reviewer or verifier approval is not required and must never block merge. Do not request or wait for AI approvals as a merge condition.
 
-Stop for unresolved privacy/product/schema/security decisions. Preserve unrelated work and `.claude/settings.local.json`; no destructive Git/deploy/DB actions. Remote writes only when explicitly authorized. Prefer targeted source ranges/diffs over broad scans.
+For a PR, require the latest exact PR head to have the official `Discourse Plugin` CI GREEN and any separately configured required Discourse-owned CI/check context GREEN. Missing, stale, skipped, pending, cancelled, or older-head CI is not GREEN. A new commit invalidates prior CI evidence. Exact changed paths must remain within task scope.
+
+When the latest exact head is GREEN and no unresolved privacy/security/schema/product/architecture blocker remains, the agent is authorized to merge without another user confirmation. Prefer squash merge with `expected_head_sha` when supported. Never weaken tests or broaden scope just to obtain GREEN.
+
+Stop for unresolved privacy/product/schema/security decisions. Preserve unrelated work and `.claude/settings.local.json`; no destructive Git/deploy/DB actions. Prefer targeted source ranges/diffs over broad scans.
 
 Task procedures live under `.agents/skills/` and load on demand; use `task-packet` for non-trivial work.
 
