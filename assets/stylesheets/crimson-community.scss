@@ -147,6 +147,22 @@
   line-height: 1.45;
 }
 
+.crimson-community-page__status {
+  display: flex;
+  margin: 0 0 1em;
+  padding: 0.7em 1em;
+  align-items: center;
+  gap: 0.55em;
+  color: var(--primary-medium);
+  background: var(--primary-very-low);
+  border: 1px solid var(--primary-low);
+  border-radius: 0.5em;
+}
+
+.crimson-community-page__status--error {
+  color: var(--danger);
+}
+
 .crimson-community-members {
   background: var(--secondary);
   border: 1px solid var(--primary-low);
@@ -232,20 +248,6 @@
 .crimson-community-members__actions .btn,
 .crimson-community-empty__actions .btn {
   margin: 0;
-}
-
-.crimson-community-members__status {
-  display: flex;
-  padding: 0.7em 1em;
-  align-items: center;
-  gap: 0.55em;
-  color: var(--primary-medium);
-  background: var(--primary-very-low);
-  border-bottom: 1px solid var(--primary-low);
-}
-
-.crimson-community-members__status--error {
-  color: var(--danger);
 }
 
 .crimson-community-member-row {
