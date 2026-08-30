@@ -2,12 +2,13 @@
 
 # name: discourse-crimson-community
 # about: senin.me Crimson Channels teması için canlı çevrimiçi üyeler ve profil ziyaretçisi geçmişi sağlar.
-# version: 1.4.0
+# version: 1.5.0
 # authors: ErespawN
 # url: https://github.com/dupless54/discourse-crimson-community
 # required_version: 3.3.0
 
 register_asset "stylesheets/crimson-community.scss"
+register_asset "stylesheets/crimson-community-dashboard.scss"
 
 enabled_site_setting :crimson_community_enabled
 
