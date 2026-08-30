@@ -6,17 +6,37 @@ import RouteTemplate from "ember-route-template";
 import { ajax } from "discourse/lib/ajax";
 import DButton from "discourse/ui-kit/d-button";
 import DUserInfo from "discourse/ui-kit/d-user-info";
+import dFormatDate from "discourse/ui-kit/helpers/d-format-date";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
 
 class CrimsonCommunityPage extends Component {
   @tracked snapshot = this.args.initialSnapshot;
+  @tracked visitors = this.args.initialSnapshot?.profile_visitors;
   @tracked query = "";
   @tracked isRefreshing = false;
   @tracked refreshFailed = false;
+  @tracked isRefreshingVisitors = false;
+  @tracked visitorRefreshFailed = false;
 
   get users() {
     return Array.isArray(this.snapshot?.users) ? this.snapshot.users : [];
+  }
+
+  get visitorUsers() {
+    return Array.isArray(this.visitors?.users) ? this.visitors.users : [];
+  }
+
+  get visitorsEnabled() {
+    return this.visitors?.enabled === true;
+  }
+
+  get visitorsDisabled() {
+    return this.visitors?.enabled === false;
+  }
+
+  get visitorsUnavailable() {
+    return Boolean(this.visitors?.unavailable);
   }
 
   get normalizedQuery() {
@@ -67,6 +87,24 @@ class CrimsonCommunityPage extends Component {
       this.refreshFailed = true;
     } finally {
       this.isRefreshing = false;
+    }
+  }
+
+  @action
+  async refreshVisitors() {
+    if (this.isRefreshingVisitors) {
+      return;
+    }
+
+    this.isRefreshingVisitors = true;
+    this.visitorRefreshFailed = false;
+
+    try {
+      this.visitors = await ajax("/crimson-community/profile-visits.json");
+    } catch {
+      this.visitorRefreshFailed = true;
+    } finally {
+      this.isRefreshingVisitors = false;
     }
   }
 
@@ -146,6 +184,110 @@ class CrimsonCommunityPage extends Component {
           <span>{{i18n "crimson_community.page.refresh_error"}}</span>
         </div>
       {{/if}}
+
+      <section
+        class="crimson-community-visitors"
+        aria-labelledby="crimson-community-visitors-title"
+        data-test-community-visitors
+      >
+        <header class="crimson-community-visitors__header">
+          <div>
+            <h2 id="crimson-community-visitors-title">
+              {{i18n "crimson_community.page.visitors_title"}}
+            </h2>
+            <p>{{i18n "crimson_community.page.visitors_description"}}</p>
+          </div>
+
+          {{#if this.visitorsEnabled}}
+            <div class="crimson-community-visitors__header-actions">
+              <span class="crimson-community-visitors__count">
+                {{this.visitors.count}}
+              </span>
+              <DButton
+                @action={{this.refreshVisitors}}
+                @icon="arrows-rotate"
+                @label="crimson_community.page.refresh_visitors"
+                @isLoading={{this.isRefreshingVisitors}}
+                class="btn-default"
+                data-test-community-visitors-refresh
+              />
+            </div>
+          {{/if}}
+        </header>
+
+        {{#if this.visitorRefreshFailed}}
+          <div
+            class="crimson-community-visitors__status crimson-community-visitors__status--error"
+            role="alert"
+            data-test-community-visitors-refresh-error
+          >
+            {{dIcon "circle-exclamation"}}
+            <span>{{i18n "crimson_community.page.visitors_refresh_error"}}</span>
+          </div>
+        {{/if}}
+
+        {{#if this.visitorsUnavailable}}
+          <div class="crimson-community-visitors__empty" data-test-community-visitors-unavailable>
+            <span class="crimson-community-visitors__empty-icon" aria-hidden="true">
+              {{dIcon "circle-exclamation"}}
+            </span>
+            <div>
+              <strong>{{i18n "crimson_community.page.visitors_unavailable_title"}}</strong>
+              <p>{{i18n "crimson_community.page.visitors_unavailable_description"}}</p>
+              <DButton
+                @action={{this.refreshVisitors}}
+                @icon="arrows-rotate"
+                @label="crimson_community.page.retry_visitors"
+                @isLoading={{this.isRefreshingVisitors}}
+                class="btn-default"
+                data-test-community-visitors-retry
+              />
+            </div>
+          </div>
+        {{else if this.visitorsDisabled}}
+          <div class="crimson-community-visitors__empty" data-test-community-visitors-disabled>
+            <span class="crimson-community-visitors__empty-icon" aria-hidden="true">
+              {{dIcon "eye-slash"}}
+            </span>
+            <div>
+              <strong>{{i18n "crimson_community.page.visitors_disabled_title"}}</strong>
+              <p>{{i18n "crimson_community.page.visitors_disabled_description"}}</p>
+            </div>
+          </div>
+        {{else if this.visitorUsers.length}}
+          <div class="crimson-community-visitors__list">
+            {{#each this.visitorUsers as |visitor|}}
+              <article class="crimson-community-visitor-row">
+                <DUserInfo @user={{visitor}} @headingLevel={{3}} @size="large" />
+                <span class="crimson-community-visitor-row__time">
+                  {{dIcon "clock"}}
+                  {{dFormatDate visitor.last_visited_at format="tiny"}}
+                </span>
+              </article>
+            {{/each}}
+          </div>
+
+          <footer class="crimson-community-visitors__footer">
+            {{dIcon "circle-info"}}
+            <span>
+              {{i18n
+                "crimson_community.page.visitors_retention"
+                count=this.visitors.retention_days
+              }}
+            </span>
+          </footer>
+        {{else}}
+          <div class="crimson-community-visitors__empty" data-test-community-visitors-empty>
+            <span class="crimson-community-visitors__empty-icon" aria-hidden="true">
+              {{dIcon "users"}}
+            </span>
+            <div>
+              <strong>{{i18n "crimson_community.page.visitors_empty_title"}}</strong>
+              <p>{{i18n "crimson_community.page.visitors_empty_description"}}</p>
+            </div>
+          </div>
+        {{/if}}
+      </section>
 
       {{#if this.users.length}}
         <section
