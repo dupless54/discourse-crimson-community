@@ -1,7 +1,7 @@
 plugins:
   crimson_community_enabled:
     default: true
-    client: false
+    client: true
   crimson_online_window_minutes:
     default: 5
     min: 1
