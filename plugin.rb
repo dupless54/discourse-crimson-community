@@ -2,7 +2,7 @@
 
 # name: discourse-crimson-community
 # about: senin.me Crimson Channels teması için canlı çevrimiçi üyeler ve profil ziyaretçisi geçmişi sağlar.
-# version: 1.1.0
+# version: 1.2.0
 # authors: ErespawN
 # url: https://github.com/dupless54/discourse-crimson-community
 # required_version: 3.3.0
@@ -26,6 +26,7 @@ end
 
 after_initialize do
   require_relative "lib/crimson_community/user_presenter"
+  require_relative "lib/crimson_community/presence_snapshot"
   require_relative "app/controllers/crimson_community/presence_controller"
   require_relative "app/controllers/crimson_community/profile_visits_controller"
 
@@ -83,6 +84,8 @@ after_initialize do
   ) do
     @crimson_online_channel ||=
       PresenceChannel.new(CrimsonCommunity::ONLINE_CHANNEL)
-    PresenceChannelStateSerializer.new(@crimson_online_channel.state, root: nil)
+    CrimsonCommunity::PresenceSnapshot.new(@crimson_online_channel).filtered_state
+  rescue PresenceChannel::InvalidAccess
+    { count: 0, last_message_id: nil, users: [] }
   end
 end
