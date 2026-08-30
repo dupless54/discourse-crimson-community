@@ -13,8 +13,26 @@ export default class CrimsonCommunityRoute extends DiscourseRoute {
     }
   }
 
-  model() {
-    return ajax("/crimson-community/online.json");
+  async model() {
+    const [presence, profileVisitors] = await Promise.all([
+      ajax("/crimson-community/online.json"),
+      this.loadProfileVisitors(),
+    ]);
+
+    return { ...presence, profile_visitors: profileVisitors };
+  }
+
+  async loadProfileVisitors() {
+    try {
+      return await ajax("/crimson-community/profile-visits.json");
+    } catch {
+      return {
+        enabled: null,
+        unavailable: true,
+        users: [],
+        count: 0,
+      };
+    }
   }
 
   titleToken() {

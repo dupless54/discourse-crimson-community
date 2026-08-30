@@ -19,6 +19,7 @@
 }
 
 .crimson-community-page__heading h1,
+.crimson-community-visitors__header h2,
 .crimson-community-members__header h2,
 .crimson-community-empty h2 {
   margin: 0;
@@ -161,6 +162,148 @@
 
 .crimson-community-page__status--error {
   color: var(--danger);
+}
+
+.crimson-community-visitors {
+  margin-bottom: 1em;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+  border-radius: 0.5em;
+  overflow: hidden;
+}
+
+.crimson-community-visitors__header {
+  display: flex;
+  padding: 0.9em 1em;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 0.75em;
+  background: var(--primary-very-low);
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-visitors__header > div:first-child {
+  min-width: 0;
+}
+
+.crimson-community-visitors__header h2 {
+  font-size: var(--font-up-1);
+}
+
+.crimson-community-visitors__header p {
+  margin: 0.25em 0 0;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  line-height: 1.4;
+}
+
+.crimson-community-visitors__header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.crimson-community-visitors__header-actions .btn {
+  margin: 0;
+}
+
+.crimson-community-visitors__count {
+  min-width: 2em;
+  padding: 0.2em 0.5em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  text-align: center;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+  border-radius: 1em;
+}
+
+.crimson-community-visitors__status {
+  display: flex;
+  padding: 0.7em 1em;
+  align-items: center;
+  gap: 0.55em;
+  color: var(--primary-medium);
+  background: var(--primary-very-low);
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-visitors__status--error {
+  color: var(--danger);
+}
+
+.crimson-community-visitor-row {
+  display: flex;
+  min-height: 4.5em;
+  padding: 0.8em 1em;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.55em;
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.crimson-community-visitor-row:last-child {
+  border-bottom: 0;
+}
+
+.crimson-community-visitor-row:focus-within {
+  background: var(--primary-very-low);
+}
+
+.crimson-community-visitor-row .user-info {
+  width: 100%;
+  min-width: 0;
+}
+
+.crimson-community-visitor-row__time {
+  display: inline-flex;
+  margin-inline-start: 3.25em;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+}
+
+.crimson-community-visitors__empty {
+  display: flex;
+  min-height: 8em;
+  padding: 1.5em 1em;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8em;
+  color: var(--primary-medium);
+}
+
+.crimson-community-visitors__empty-icon {
+  display: inline-grid;
+  width: 2.4em;
+  height: 2.4em;
+  flex: 0 0 auto;
+  place-items: center;
+  background: var(--primary-very-low);
+  border-radius: 50%;
+}
+
+.crimson-community-visitors__empty strong {
+  color: var(--primary);
+}
+
+.crimson-community-visitors__empty p {
+  max-width: 52ch;
+  margin: 0.2em 0 0.75em;
+  line-height: 1.4;
+}
+
+.crimson-community-visitors__footer {
+  display: flex;
+  padding: 0.75em 1em;
+  align-items: center;
+  gap: 0.55em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  background: var(--primary-very-low);
+  border-top: 1px solid var(--primary-low);
 }
 
 .crimson-community-members {
@@ -394,6 +537,29 @@
     border-inline-end: 0;
   }
 
+  .crimson-community-visitors__header {
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 1em;
+  }
+
+  .crimson-community-visitors__header-actions {
+    flex: 0 0 auto;
+  }
+
+  .crimson-community-visitor-row {
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 1em;
+  }
+
+  .crimson-community-visitor-row__time {
+    margin-inline-start: 0;
+    flex: 0 0 auto;
+  }
+
   .crimson-community-members__toolbar {
     align-items: flex-end;
     justify-content: space-between;
@@ -422,6 +588,7 @@
 }
 
 @media (hover: hover) {
+  .crimson-community-visitor-row:hover,
   .crimson-community-member-row:hover {
     background: var(--primary-very-low);
   }

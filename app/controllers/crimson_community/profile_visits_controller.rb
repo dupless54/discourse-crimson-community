@@ -5,6 +5,24 @@ module ::CrimsonCommunity
     requires_plugin CrimsonCommunity::PLUGIN_NAME
     requires_login
 
+    def mine
+      ensure_community_enabled!
+      response.headers["Cache-Control"] = "no-store"
+
+      unless SiteSetting.crimson_profile_visitors_enabled
+        render json: {
+                 enabled: false,
+                 profile_username: current_user.username,
+                 users: [],
+                 count: 0,
+                 generated_at: Time.zone.now,
+               }
+        return
+      end
+
+      render json: visitor_list_json(current_user).merge(enabled: true)
+    end
+
     def index
       ensure_feature_enabled!
       profile_user = find_profile_user!
@@ -28,8 +46,12 @@ module ::CrimsonCommunity
 
     private
 
-    def ensure_feature_enabled!
+    def ensure_community_enabled!
       raise Discourse::NotFound unless SiteSetting.crimson_community_enabled
+    end
+
+    def ensure_feature_enabled!
+      ensure_community_enabled!
       raise Discourse::NotFound unless SiteSetting.crimson_profile_visitors_enabled
     end
 
@@ -58,6 +80,10 @@ module ::CrimsonCommunity
     end
 
     def render_visitor_list(profile_user)
+      render json: visitor_list_json(profile_user)
+    end
+
+    def visitor_list_json(profile_user)
       limit = SiteSetting.crimson_profile_visitors_limit.to_i.clamp(4, 100)
       candidate_limit = [limit * 3, 300].min
       retention_days =
@@ -95,14 +121,14 @@ module ::CrimsonCommunity
           end
           .first(limit)
 
-      render json: {
-               profile_username: profile_user.username,
-               users: users,
-               count: users.length,
-               limit: limit,
-               retention_days: retention_days,
-               generated_at: Time.zone.now,
-             }
+      {
+        profile_username: profile_user.username,
+        users: users,
+        count: users.length,
+        limit: limit,
+        retention_days: retention_days,
+        generated_at: Time.zone.now,
+      }
     end
   end
 end
