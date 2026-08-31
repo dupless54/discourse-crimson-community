@@ -414,7 +414,7 @@ class CrimsonCommunityPage extends Component {
                         "btn btn-default is-active"
                         "btn btn-default"
                       }}
-                      aria-pressed={{this.isComfortableDensity}}
+                      aria-pressed={{if this.isComfortableDensity "true" "false"}}
                       data-test-community-density-comfortable
                       {{on "click" this.useComfortableDensity}}
                     >
@@ -427,7 +427,7 @@ class CrimsonCommunityPage extends Component {
                         "btn btn-default is-active"
                         "btn btn-default"
                       }}
-                      aria-pressed={{this.isCompactDensity}}
+                      aria-pressed={{if this.isCompactDensity "true" "false"}}
                       data-test-community-density-compact
                       {{on "click" this.useCompactDensity}}
                     >
