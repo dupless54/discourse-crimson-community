@@ -1,6 +1,9 @@
-import { click, select, visit } from "@ember/test-helpers";
+import { click, select, settled, visit } from "@ember/test-helpers";
 import { test } from "qunit";
-import { acceptance } from "discourse/tests/helpers/qunit-helpers";
+import {
+  acceptance,
+  updateCurrentUser,
+} from "discourse/tests/helpers/qunit-helpers";
 
 let onlineRequestCount = 0;
 let visitorRequestCount = 0;
@@ -96,7 +99,11 @@ function resetRequests() {
 }
 
 acceptance("Crimson Community dashboard", function (needs) {
-  needs.user();
+  needs.user({
+    all_unread_notifications_count: 7,
+    new_personal_messages_notifications_count: 3,
+    draft_count: 2,
+  });
   needs.settings({ crimson_community_enabled: true });
   needs.pretender((server, helper) => {
     server.get("/crimson-community/online.json", () => {
@@ -141,7 +148,7 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom(".crimson-community-visitor-row").exists({ count: 6 });
   });
 
-  test("renders personal Discourse shortcuts without another request", async function (assert) {
+  test("renders attention-aware personal shortcuts without another request", async function (assert) {
     resetRequests();
 
     await visit("/community");
@@ -150,11 +157,46 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom("[data-test-community-action-profile]").hasAttribute("href", "/u/eviltrout");
     assert.dom("[data-test-community-action-posts]").hasAttribute("href", "/my/activity");
     assert.dom("[data-test-community-action-messages]").hasAttribute("href", "/my/messages");
+    assert.dom("[data-test-community-action-notifications]").hasAttribute("href", "/u/eviltrout/notifications");
     assert
       .dom("[data-test-community-action-bookmarks]")
       .hasAttribute("href", "/u/eviltrout/activity/bookmarks");
-    assert.strictEqual(onlineRequestCount, 1, "quick actions do not reload presence");
-    assert.strictEqual(visitorRequestCount, 1, "quick actions do not reload visitors");
+    assert.dom("[data-test-community-action-drafts]").hasAttribute("href", "/u/eviltrout/activity/drafts");
+    assert.dom("[data-test-community-action-messages-badge]").hasText("3");
+    assert.dom("[data-test-community-action-notifications-badge]").hasText("7");
+    assert.dom("[data-test-community-action-drafts-badge]").hasText("2");
+    assert.strictEqual(onlineRequestCount, 1, "personal shortcuts do not reload presence");
+    assert.strictEqual(visitorRequestCount, 1, "personal shortcuts do not reload visitors");
+  });
+
+  test("updates attention badges from current-user state without Community requests", async function (assert) {
+    resetRequests();
+
+    await visit("/community");
+
+    updateCurrentUser({
+      all_unread_notifications_count: 9,
+      new_personal_messages_notifications_count: 4,
+      draft_count: 5,
+    });
+    await settled();
+
+    assert.dom("[data-test-community-action-messages-badge]").hasText("4");
+    assert.dom("[data-test-community-action-notifications-badge]").hasText("9");
+    assert.dom("[data-test-community-action-drafts-badge]").hasText("5");
+    assert.strictEqual(onlineRequestCount, 1, "attention changes do not reload presence");
+    assert.strictEqual(visitorRequestCount, 1, "attention changes do not reload visitors");
+
+    updateCurrentUser({
+      all_unread_notifications_count: 0,
+      new_personal_messages_notifications_count: 0,
+      draft_count: 0,
+    });
+    await settled();
+
+    assert.dom("[data-test-community-action-messages-badge]").doesNotExist();
+    assert.dom("[data-test-community-action-notifications-badge]").doesNotExist();
+    assert.dom("[data-test-community-action-drafts-badge]").doesNotExist();
   });
 
   test("sorts the authorized online snapshot without another request", async function (assert) {

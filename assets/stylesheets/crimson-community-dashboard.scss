@@ -105,10 +105,26 @@
   min-width: 0;
 }
 
-.crimson-community-actions__copy span {
+.crimson-community-actions__copy > span {
   color: var(--primary-medium);
   font-size: var(--font-down-1);
   line-height: var(--line-height-medium);
+}
+
+.crimson-community-actions__title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.crimson-community-actions__badge.badge-notification {
+  flex: 0 0 auto;
+  min-width: 1.5em;
+  margin: 0;
+  font-size: var(--font-down-2);
+  line-height: 1.45;
+  text-align: center;
 }
 
 .crimson-community-actions__chevron {
@@ -268,7 +284,7 @@
 
 @include viewport.from(md) {
   .crimson-community-actions__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .crimson-community-dashboard {
