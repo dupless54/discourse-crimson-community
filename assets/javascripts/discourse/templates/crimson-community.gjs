@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
-import { action } from "@ember/object";
+import { action, get } from "@ember/object";
 import { service } from "@ember/service";
 import RouteTemplate from "ember-route-template";
 import { ajax } from "discourse/lib/ajax";
@@ -110,20 +110,22 @@ class CrimsonCommunityPage extends Component {
 
   get unreadNotificationsCount() {
     return Math.max(
-      Number(this.currentUser?.all_unread_notifications_count) || 0,
+      Number(get(this.currentUser, "all_unread_notifications_count")) || 0,
       0,
     );
   }
 
   get newMessagesCount() {
     return Math.max(
-      Number(this.currentUser?.new_personal_messages_notifications_count) || 0,
+      Number(
+        get(this.currentUser, "new_personal_messages_notifications_count"),
+      ) || 0,
       0,
     );
   }
 
   get draftsCount() {
-    return Math.max(Number(this.currentUser?.draft_count) || 0, 0);
+    return Math.max(Number(get(this.currentUser, "draft_count")) || 0, 0);
   }
 
   get normalizedQuery() {
