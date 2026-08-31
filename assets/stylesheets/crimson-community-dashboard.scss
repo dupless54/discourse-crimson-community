@@ -77,7 +77,7 @@
   color: var(--primary);
   background: var(--secondary);
   border: 1px solid var(--primary-low-mid);
-  border-radius: var(--d-input-border-radius);
+  border-radius: var(--d-input-border-radius, 0.25em);
 }
 
 .crimson-community-members__sort-select:focus {
@@ -140,8 +140,21 @@
     justify-content: flex-end;
   }
 
+  .crimson-community-members__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .crimson-community-members__search-field {
+    max-width: none;
+  }
+
   .crimson-community-members__preferences {
     grid-template-columns: minmax(10em, 1fr) minmax(14em, auto);
+  }
+
+  .crimson-community-members__actions {
+    align-self: flex-end;
   }
 }
 
