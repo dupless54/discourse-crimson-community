@@ -128,6 +128,16 @@ class CrimsonCommunityPage extends Component {
     return Math.max(Number(get(this.currentUser, "draft_count")) || 0, 0);
   }
 
+  get attentionTotal() {
+    return (
+      this.newMessagesCount + this.unreadNotificationsCount + this.draftsCount
+    );
+  }
+
+  get hasAttention() {
+    return this.attentionTotal > 0;
+  }
+
   get normalizedQuery() {
     return this.query.trim().toLowerCase();
   }
@@ -345,7 +355,27 @@ class CrimsonCommunityPage extends Component {
         </div>
       </aside>
 
+      <nav
+        class="crimson-community-section-nav"
+        aria-label={{i18n "crimson_community.page.section_navigation_label"}}
+        data-test-community-section-nav
+      >
+        <a class="btn btn-default" href="#crimson-community-actions">
+          {{dIcon "user"}}
+          <span>{{i18n "crimson_community.page.section_your_space"}}</span>
+        </a>
+        <a class="btn btn-default" href="#crimson-community-online">
+          {{dIcon "users"}}
+          <span>{{i18n "crimson_community.page.section_online"}}</span>
+        </a>
+        <a class="btn btn-default" href="#crimson-community-visitors">
+          {{dIcon "eye"}}
+          <span>{{i18n "crimson_community.page.section_visitors"}}</span>
+        </a>
+      </nav>
+
       <section
+        id="crimson-community-actions"
         class="crimson-community-actions"
         aria-labelledby="crimson-community-actions-title"
         data-test-community-actions
@@ -361,6 +391,86 @@ class CrimsonCommunityPage extends Component {
             <DUserInfo @user={{this.currentUser}} @headingLevel={{3}} @size="medium" />
           </div>
         </header>
+
+        <section
+          class="crimson-community-attention"
+          aria-labelledby="crimson-community-attention-title"
+          aria-live="polite"
+          data-test-community-attention
+        >
+          <div class="crimson-community-attention__heading">
+            <span class="crimson-community-attention__icon" aria-hidden="true">
+              {{dIcon "bell"}}
+            </span>
+            <div>
+              <h3 id="crimson-community-attention-title">
+                {{i18n "crimson_community.page.attention_title"}}
+              </h3>
+              {{#if this.hasAttention}}
+                <p data-test-community-attention-total>
+                  {{i18n
+                    "crimson_community.page.attention_description"
+                    count=this.attentionTotal
+                  }}
+                </p>
+              {{else}}
+                <p>{{i18n "crimson_community.page.attention_caught_up_description"}}</p>
+              {{/if}}
+            </div>
+          </div>
+
+          {{#if this.hasAttention}}
+            <nav
+              class="crimson-community-attention__items"
+              aria-label={{i18n "crimson_community.page.attention_items_label"}}
+            >
+              {{#if this.newMessagesCount}}
+                <a
+                  class="crimson-community-attention__item"
+                  href="/my/messages"
+                  data-test-community-attention-messages
+                >
+                  {{dIcon "inbox"}}
+                  <span>{{i18n "crimson_community.page.quick_action_messages"}}</span>
+                  <span class="badge-notification">{{this.newMessagesCount}}</span>
+                </a>
+              {{/if}}
+
+              {{#if this.unreadNotificationsCount}}
+                <a
+                  class="crimson-community-attention__item"
+                  href={{this.notificationsPath}}
+                  data-test-community-attention-notifications
+                >
+                  {{dIcon "bell"}}
+                  <span>{{i18n "crimson_community.page.quick_action_notifications"}}</span>
+                  <span class="badge-notification">{{this.unreadNotificationsCount}}</span>
+                </a>
+              {{/if}}
+
+              {{#if this.draftsCount}}
+                <a
+                  class="crimson-community-attention__item"
+                  href={{this.draftsPath}}
+                  data-test-community-attention-drafts
+                >
+                  {{dIcon "pencil"}}
+                  <span>{{i18n "crimson_community.page.quick_action_drafts"}}</span>
+                  <span class="badge-notification">{{this.draftsCount}}</span>
+                </a>
+              {{/if}}
+            </nav>
+          {{else}}
+            <div
+              class="crimson-community-attention__empty"
+              role="status"
+              data-test-community-attention-empty
+            >
+              {{dIcon "circle-check"}}
+              <strong>{{i18n "crimson_community.page.attention_caught_up_title"}}</strong>
+            </div>
+          {{/if}}
+        </section>
 
         <nav
           class="crimson-community-actions__grid"
@@ -550,6 +660,7 @@ class CrimsonCommunityPage extends Component {
       >
         {{#if this.users.length}}
           <section
+            id="crimson-community-online"
             class="crimson-community-members crimson-community-dashboard__primary"
             aria-labelledby="crimson-community-online-title"
           >
@@ -720,7 +831,10 @@ class CrimsonCommunityPage extends Component {
             {{/if}}
           </section>
         {{else}}
-          <section class="crimson-community-empty crimson-community-dashboard__primary">
+          <section
+            id="crimson-community-online"
+            class="crimson-community-empty crimson-community-dashboard__primary"
+          >
             <span class="crimson-community-empty__icon" aria-hidden="true">
               {{dIcon "users"}}
             </span>
@@ -744,6 +858,7 @@ class CrimsonCommunityPage extends Component {
         {{/if}}
 
         <section
+          id="crimson-community-visitors"
           class="crimson-community-visitors crimson-community-dashboard__secondary"
           aria-labelledby="crimson-community-visitors-title"
           data-test-community-visitors
