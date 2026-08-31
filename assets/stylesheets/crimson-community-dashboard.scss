@@ -18,12 +18,15 @@
 }
 
 .crimson-community-section-nav {
+  position: sticky;
+  top: var(--header-offset, 0px);
+  z-index: 2;
   display: flex;
   margin-bottom: 1em;
   padding: 0.35em;
   gap: 0.35em;
   overflow-x: auto;
-  background: var(--primary-very-low);
+  background: var(--secondary);
   border: 1px solid var(--primary-low);
   border-radius: var(--d-border-radius, 0.5em);
   scrollbar-width: thin;
@@ -31,15 +34,37 @@
 
 .crimson-community-section-nav .btn {
   flex: 1 0 auto;
+  min-width: max-content;
   margin: 0;
+  align-items: center;
   justify-content: center;
+  gap: 0.4em;
   white-space: nowrap;
+}
+
+.crimson-community-section-nav__count {
+  display: inline-grid;
+  min-width: 1.65em;
+  min-height: 1.65em;
+  padding-inline: 0.4em;
+  place-items: center;
+  color: var(--primary);
+  background: var(--primary-low);
+  border-radius: 999px;
+  font-size: var(--font-down-2);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.crimson-community-section-nav__count--attention {
+  color: var(--secondary);
+  background: var(--tertiary);
 }
 
 #crimson-community-actions,
 #crimson-community-online,
 #crimson-community-visitors {
-  scroll-margin-top: 5em;
+  scroll-margin-top: calc(var(--header-offset, 0px) + 4.5em);
 }
 
 .crimson-community-actions {
