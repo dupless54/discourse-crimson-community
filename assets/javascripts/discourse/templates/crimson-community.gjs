@@ -2,6 +2,7 @@ import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import RouteTemplate from "ember-route-template";
 import { ajax } from "discourse/lib/ajax";
 import DButton from "discourse/ui-kit/d-button";
@@ -13,6 +14,8 @@ import { i18n } from "discourse-i18n";
 const VISITOR_PREVIEW_LIMIT = 6;
 
 class CrimsonCommunityPage extends Component {
+  @service currentUser;
+
   @tracked snapshot = this.args.initialSnapshot;
   @tracked visitors = this.args.initialSnapshot?.profile_visitors;
   @tracked query = "";
@@ -75,6 +78,22 @@ class CrimsonCommunityPage extends Component {
 
   get isCompactDensity() {
     return this.density === "compact";
+  }
+
+  get currentUsername() {
+    return this.currentUser?.username;
+  }
+
+  get profilePath() {
+    return this.currentUsername
+      ? `/u/${encodeURIComponent(this.currentUsername)}`
+      : "/my/activity";
+  }
+
+  get bookmarksPath() {
+    return this.currentUsername
+      ? `/u/${encodeURIComponent(this.currentUsername)}/activity/bookmarks`
+      : "/my/activity";
   }
 
   get normalizedQuery() {
@@ -293,6 +312,97 @@ class CrimsonCommunityPage extends Component {
           <p>{{i18n "crimson_community.page.privacy_description"}}</p>
         </div>
       </aside>
+
+      <section
+        class="crimson-community-actions"
+        aria-labelledby="crimson-community-actions-title"
+        data-test-community-actions
+      >
+        <header class="crimson-community-actions__header">
+          <div class="crimson-community-actions__heading">
+            <h2 id="crimson-community-actions-title">
+              {{i18n "crimson_community.page.quick_actions_title"}}
+            </h2>
+            <p>{{i18n "crimson_community.page.quick_actions_description"}}</p>
+          </div>
+          <div class="crimson-community-actions__identity">
+            <DUserInfo @user={{this.currentUser}} @headingLevel={{3}} @size="medium" />
+          </div>
+        </header>
+
+        <nav
+          class="crimson-community-actions__grid"
+          aria-label={{i18n "crimson_community.page.quick_actions_label"}}
+        >
+          <a
+            class="crimson-community-actions__link"
+            href={{this.profilePath}}
+            data-test-community-action-profile
+          >
+            <span class="crimson-community-actions__icon" aria-hidden="true">
+              {{dIcon "user"}}
+            </span>
+            <span class="crimson-community-actions__copy">
+              <strong>{{i18n "crimson_community.page.quick_action_profile"}}</strong>
+              <span>{{i18n "crimson_community.page.quick_action_profile_description"}}</span>
+            </span>
+            <span class="crimson-community-actions__chevron" aria-hidden="true">
+              {{dIcon "chevron-right"}}
+            </span>
+          </a>
+
+          <a
+            class="crimson-community-actions__link"
+            href="/my/activity"
+            data-test-community-action-posts
+          >
+            <span class="crimson-community-actions__icon" aria-hidden="true">
+              {{dIcon "list"}}
+            </span>
+            <span class="crimson-community-actions__copy">
+              <strong>{{i18n "crimson_community.page.quick_action_posts"}}</strong>
+              <span>{{i18n "crimson_community.page.quick_action_posts_description"}}</span>
+            </span>
+            <span class="crimson-community-actions__chevron" aria-hidden="true">
+              {{dIcon "chevron-right"}}
+            </span>
+          </a>
+
+          <a
+            class="crimson-community-actions__link"
+            href="/my/messages"
+            data-test-community-action-messages
+          >
+            <span class="crimson-community-actions__icon" aria-hidden="true">
+              {{dIcon "inbox"}}
+            </span>
+            <span class="crimson-community-actions__copy">
+              <strong>{{i18n "crimson_community.page.quick_action_messages"}}</strong>
+              <span>{{i18n "crimson_community.page.quick_action_messages_description"}}</span>
+            </span>
+            <span class="crimson-community-actions__chevron" aria-hidden="true">
+              {{dIcon "chevron-right"}}
+            </span>
+          </a>
+
+          <a
+            class="crimson-community-actions__link"
+            href={{this.bookmarksPath}}
+            data-test-community-action-bookmarks
+          >
+            <span class="crimson-community-actions__icon" aria-hidden="true">
+              {{dIcon "bookmark"}}
+            </span>
+            <span class="crimson-community-actions__copy">
+              <strong>{{i18n "crimson_community.page.quick_action_bookmarks"}}</strong>
+              <span>{{i18n "crimson_community.page.quick_action_bookmarks_description"}}</span>
+            </span>
+            <span class="crimson-community-actions__chevron" aria-hidden="true">
+              {{dIcon "chevron-right"}}
+            </span>
+          </a>
+        </nav>
+      </section>
 
       {{#if this.dashboardRefreshPartial}}
         <div
