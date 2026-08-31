@@ -141,6 +141,22 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom(".crimson-community-visitor-row").exists({ count: 6 });
   });
 
+  test("renders personal Discourse shortcuts without another request", async function (assert) {
+    resetRequests();
+
+    await visit("/community");
+
+    assert.dom("[data-test-community-actions]").exists();
+    assert.dom("[data-test-community-action-profile]").hasAttribute("href", "/u/eviltrout");
+    assert.dom("[data-test-community-action-posts]").hasAttribute("href", "/my/activity");
+    assert.dom("[data-test-community-action-messages]").hasAttribute("href", "/my/messages");
+    assert
+      .dom("[data-test-community-action-bookmarks]")
+      .hasAttribute("href", "/u/eviltrout/activity/bookmarks");
+    assert.strictEqual(onlineRequestCount, 1, "quick actions do not reload presence");
+    assert.strictEqual(visitorRequestCount, 1, "quick actions do not reload visitors");
+  });
+
   test("sorts the authorized online snapshot without another request", async function (assert) {
     resetRequests();
 

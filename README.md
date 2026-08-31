@@ -11,6 +11,7 @@ A companion Discourse plugin for the **Crimson Channels** theme. It provides aut
 ## Current Features
 
 - Native `/community` dashboard using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
+- Personal **Your space** action center for the signed-in user with native links to profile, posts, messages, and bookmarks without duplicating those Discourse data sources inside the plugin.
 - Responsive dashboard composition: online members remain the primary panel while the signed-in user's profile visitors become a compact secondary panel on wider screens and stack naturally on mobile.
 - Online-member presentation backed by Discourse PresenceChannel data with an additional privacy-safe snapshot filter before output.
 - Separate total-online, displayed-member, and activity-window summaries without changing the existing `users`, `count`, or `window_minutes` contract.
@@ -27,7 +28,7 @@ A companion Discourse plugin for the **Crimson Channels** theme. It provides aut
 - Stable `crimson_profile_background_url` presentation contract for the Crimson Channels user-card experience.
 - Privacy-filtered `crimson_online_state` site serializer for theme integrations.
 - Community sidebar integration through the supported Discourse plugin API.
-- Core `DUserInfo` presentation for online-member and profile-visitor rows.
+- Core `DUserInfo` presentation for online-member, profile-visitor, and signed-in-user identity rows.
 - English and Turkish client localization.
 - Light/dark-mode compatibility through Discourse theme variables.
 
@@ -42,6 +43,7 @@ Privacy and visibility decisions remain on the server:
 - the Community visitor panel uses a current-user-only read endpoint whose target is derived from the authenticated session, avoiding username/IDOR selection and avoiding synthetic self-visits;
 - the existing username profile-visit endpoint keeps its visit-recording behavior for profile/theme integrations;
 - the `/community` dashboard only composes the existing authorized presence and current-user visitor responses and does not create a new member discovery or activity API;
+- personal action links navigate to existing Discourse profile/activity/message/bookmark routes and do not copy or prefetch those datasets into Community;
 - Community search and sorting only transform the authorized snapshot already returned by the server and cannot discover hidden members;
 - density changes are presentation-only and perform no member/visitor request;
 - visitor preview expansion is client-side only and never requests or reveals accounts beyond the already-authorized visitor response;
@@ -57,6 +59,16 @@ Privacy and visibility decisions remain on the server:
 All JSON service endpoints require an authenticated Discourse user. Username-targeted profile-visit endpoints apply Discourse Guardian profile visibility before persistence or serialization. The current-user read endpoint derives its target from `current_user` and never records a visit while loading Community history.
 
 The online response keeps the established `users`, `count`, `window_minutes`, and `generated_at` fields and adds `total_count`, `remaining_count`, and `limit` so clients can distinguish the complete eligible presence snapshot from the configured list cap.
+
+## Version 1.7.0 Highlights
+
+- Added a responsive **Your space** personal action center above the Community dashboard.
+- Added native shortcuts to the signed-in user's profile, `/my/activity`, `/my/messages`, and the core user bookmark route.
+- Uses Discourse's existing current-user service only to build user-specific profile/bookmark paths; rendering the action center performs no additional request.
+- Keeps posts, messages, bookmarks, and profile data owned by core Discourse instead of creating duplicate Community APIs or state.
+- Added mobile-first one/two/four-column action-card styling using Discourse theme variables and viewport helpers.
+- Added acceptance coverage proving the shortcuts resolve to the authenticated user and do not trigger extra presence/visitor requests.
+- Added no controller, route, serializer, setting, migration, persistence, Guardian, PresenceChannel, authorization, or tracking-contract change.
 
 ## Version 1.6.0 Highlights
 
