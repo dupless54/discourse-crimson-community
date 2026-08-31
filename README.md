@@ -11,7 +11,8 @@ A companion Discourse plugin for the **Crimson Channels** theme. It provides aut
 ## Current Features
 
 - Native `/community` dashboard using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
-- Personal **Your space** action center for the signed-in user with native links to profile, posts, messages, and bookmarks without duplicating those Discourse data sources inside the plugin.
+- Personal **Your space** action center for the signed-in user with native links to profile, posts, messages, notifications, bookmarks, and drafts without duplicating those Discourse data sources inside the plugin.
+- Live attention badges for new private-message notifications, unread notifications, and drafts using fields already present on Discourse's current-user payload; no Community request is added for these counts.
 - Responsive dashboard composition: online members remain the primary panel while the signed-in user's profile visitors become a compact secondary panel on wider screens and stack naturally on mobile.
 - Online-member presentation backed by Discourse PresenceChannel data with an additional privacy-safe snapshot filter before output.
 - Separate total-online, displayed-member, and activity-window summaries without changing the existing `users`, `count`, or `window_minutes` contract.
@@ -43,7 +44,8 @@ Privacy and visibility decisions remain on the server:
 - the Community visitor panel uses a current-user-only read endpoint whose target is derived from the authenticated session, avoiding username/IDOR selection and avoiding synthetic self-visits;
 - the existing username profile-visit endpoint keeps its visit-recording behavior for profile/theme integrations;
 - the `/community` dashboard only composes the existing authorized presence and current-user visitor responses and does not create a new member discovery or activity API;
-- personal action links navigate to existing Discourse profile/activity/message/bookmark routes and do not copy or prefetch those datasets into Community;
+- personal action links navigate to existing Discourse profile/activity/message/notification/bookmark/draft routes and do not copy or prefetch those datasets into Community;
+- attention badges read only the signed-in user's existing current-user counts and do not introduce another serializer, endpoint, polling loop, or permission decision;
 - Community search and sorting only transform the authorized snapshot already returned by the server and cannot discover hidden members;
 - density changes are presentation-only and perform no member/visitor request;
 - visitor preview expansion is client-side only and never requests or reveals accounts beyond the already-authorized visitor response;
@@ -59,6 +61,15 @@ Privacy and visibility decisions remain on the server:
 All JSON service endpoints require an authenticated Discourse user. Username-targeted profile-visit endpoints apply Discourse Guardian profile visibility before persistence or serialization. The current-user read endpoint derives its target from `current_user` and never records a visit while loading Community history.
 
 The online response keeps the established `users`, `count`, `window_minutes`, and `generated_at` fields and adds `total_count`, `remaining_count`, and `limit` so clients can distinguish the complete eligible presence snapshot from the configured list cap.
+
+## Version 1.8.0 Highlights
+
+- Expanded **Your space** from four to six native Discourse destinations by adding **Notifications** and **Drafts**.
+- Added attention badges to Messages, Notifications, and Drafts using `new_personal_messages_notifications_count`, `all_unread_notifications_count`, and `draft_count` from the existing current-user payload.
+- Badge values follow current-user state updates and disappear when their count reaches zero without reloading Community presence or visitor data.
+- Rebalanced the responsive shortcut grid to one column on mobile, two columns from small widths, and three columns from medium widths for a stable six-card layout.
+- Added acceptance coverage for exact authenticated-user routes, current-user badge updates, zero-count badge removal, and the absence of extra Community requests.
+- Added no controller, route, serializer, setting, migration, persistence, Guardian, PresenceChannel, authorization, polling, or tracking-contract change.
 
 ## Version 1.7.0 Highlights
 
@@ -77,7 +88,7 @@ The online response keeps the established `users`, `count`, `window_minutes`, an
 - Added dashboard-wide partial/full refresh feedback so users can distinguish one-panel failure from a complete refresh failure while previous successful data remains visible.
 - Added responsive styling for sorting and density controls using Discourse theme variables and viewport helpers.
 - Expanded acceptance coverage to prove sorting and density stay client-side and to verify partial refresh recovery.
-- Added no controller, route, serializer, setting, migration, persistence, Guardian, PresenceChannel, or tracking-contract change.
+- Added no controller, route, serializer, setting, migration, persistence, Guardian, PresenceChannel, authorization, or tracking-contract change.
 
 ## Version 1.5.0 Highlights
 
