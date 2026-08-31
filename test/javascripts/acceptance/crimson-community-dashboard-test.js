@@ -1,4 +1,4 @@
-import { click, select, visit } from "@ember/test-helpers";
+import { click, select, settled, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import {
   acceptance,
@@ -179,6 +179,7 @@ acceptance("Crimson Community dashboard", function (needs) {
       new_personal_messages_notifications_count: 4,
       draft_count: 5,
     });
+    await settled();
 
     assert.dom("[data-test-community-action-messages-badge]").hasText("4");
     assert.dom("[data-test-community-action-notifications-badge]").hasText("9");
@@ -191,6 +192,7 @@ acceptance("Crimson Community dashboard", function (needs) {
       new_personal_messages_notifications_count: 0,
       draft_count: 0,
     });
+    await settled();
 
     assert.dom("[data-test-community-action-messages-badge]").doesNotExist();
     assert.dom("[data-test-community-action-notifications-badge]").doesNotExist();
