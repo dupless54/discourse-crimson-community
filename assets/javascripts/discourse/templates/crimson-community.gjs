@@ -360,17 +360,51 @@ class CrimsonCommunityPage extends Component {
         aria-label={{i18n "crimson_community.page.section_navigation_label"}}
         data-test-community-section-nav
       >
-        <a class="btn btn-default" href="#crimson-community-actions">
+        <a
+          class="btn btn-default"
+          href="#crimson-community-actions"
+          data-test-community-section-actions
+        >
           {{dIcon "user"}}
           <span>{{i18n "crimson_community.page.section_your_space"}}</span>
+          {{#if this.hasAttention}}
+            <span
+              class="crimson-community-section-nav__count crimson-community-section-nav__count--attention"
+              data-test-community-section-attention-count
+            >
+              {{this.attentionTotal}}
+            </span>
+          {{/if}}
         </a>
-        <a class="btn btn-default" href="#crimson-community-online">
+        <a
+          class="btn btn-default"
+          href="#crimson-community-online"
+          data-test-community-section-online
+        >
           {{dIcon "users"}}
           <span>{{i18n "crimson_community.page.section_online"}}</span>
+          <span
+            class="crimson-community-section-nav__count"
+            data-test-community-section-online-count
+          >
+            {{this.snapshot.total_count}}
+          </span>
         </a>
-        <a class="btn btn-default" href="#crimson-community-visitors">
+        <a
+          class="btn btn-default"
+          href="#crimson-community-visitors"
+          data-test-community-section-visitors
+        >
           {{dIcon "eye"}}
           <span>{{i18n "crimson_community.page.section_visitors"}}</span>
+          {{#if this.visitorsEnabled}}
+            <span
+              class="crimson-community-section-nav__count"
+              data-test-community-section-visitors-count
+            >
+              {{this.visitors.count}}
+            </span>
+          {{/if}}
         </a>
       </nav>
 
