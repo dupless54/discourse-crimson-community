@@ -164,6 +164,9 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert
       .dom('[data-test-community-section-nav] a[href="#crimson-community-visitors"]')
       .exists();
+    assert.dom("[data-test-community-section-attention-count]").hasText("12");
+    assert.dom("[data-test-community-section-online-count]").hasText("3");
+    assert.dom("[data-test-community-section-visitors-count]").hasText("8");
     assert.dom("[data-test-community-attention]").exists();
     assert.dom("[data-test-community-attention-total]").includesText("12");
     assert.dom("[data-test-community-attention-messages]").hasAttribute("href", "/my/messages");
@@ -204,6 +207,7 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom("[data-test-community-action-notifications-badge]").hasText("9");
     assert.dom("[data-test-community-action-drafts-badge]").hasText("5");
     assert.dom("[data-test-community-attention-total]").includesText("18");
+    assert.dom("[data-test-community-section-attention-count]").hasText("18");
     assert.dom("[data-test-community-attention-messages] .badge-notification").hasText("4");
     assert.dom("[data-test-community-attention-notifications] .badge-notification").hasText("9");
     assert.dom("[data-test-community-attention-drafts] .badge-notification").hasText("5");
@@ -224,6 +228,7 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom("[data-test-community-attention-messages]").doesNotExist();
     assert.dom("[data-test-community-attention-notifications]").doesNotExist();
     assert.dom("[data-test-community-attention-drafts]").doesNotExist();
+    assert.dom("[data-test-community-section-attention-count]").doesNotExist();
     assert.dom("[data-test-community-attention-empty]").exists();
     assert.strictEqual(onlineRequestCount, 1, "caught-up state does not reload presence");
     assert.strictEqual(visitorRequestCount, 1, "caught-up state does not reload visitors");
@@ -267,6 +272,9 @@ acceptance("Crimson Community dashboard", function (needs) {
     resetRequests();
 
     await visit("/community");
+    assert.dom("[data-test-community-section-online-count]").hasText("3");
+    assert.dom("[data-test-community-section-visitors-count]").hasText("8");
+
     await click("[data-test-community-refresh-all]");
 
     assert.strictEqual(onlineRequestCount, 2, "refreshes online presence once");
@@ -274,6 +282,8 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom(".crimson-community-member-row").includesText("Dashboard Refreshed");
     assert.dom(".crimson-community-visitor-row").exists({ count: 1 });
     assert.dom(".crimson-community-visitor-row").includesText("Dashboard Visitor 9");
+    assert.dom("[data-test-community-section-online-count]").hasText("1");
+    assert.dom("[data-test-community-section-visitors-count]").hasText("1");
     assert.dom("[data-test-community-refresh-partial]").doesNotExist();
   });
 
@@ -290,6 +300,8 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom(".crimson-community-member-row").includesText("Dashboard Refreshed");
     assert.dom(".crimson-community-visitor-row").exists({ count: 6 });
     assert.dom(".crimson-community-visitor-row:first-child").includesText("Dashboard Visitor 1");
+    assert.dom("[data-test-community-section-online-count]").hasText("1");
+    assert.dom("[data-test-community-section-visitors-count]").hasText("8");
     assert.dom("[data-test-community-visitors-refresh-error]").exists();
   });
 });
