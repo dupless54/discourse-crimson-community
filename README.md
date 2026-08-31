@@ -13,6 +13,8 @@ A companion Discourse plugin for the **Crimson Channels** theme. It provides aut
 - Native `/community` dashboard using the standard Discourse application shell, header, sidebar, theme variables, viewport helpers, and responsive layout.
 - Personal **Your space** action center for the signed-in user with native links to profile, posts, messages, notifications, bookmarks, and drafts without duplicating those Discourse data sources inside the plugin.
 - Live attention badges for new private-message notifications, unread notifications, and drafts using fields already present on Discourse's current-user payload; no Community request is added for these counts.
+- Client-only **Needs your attention** summary that aggregates those existing message, notification, and draft counts, exposes only nonzero destinations, and switches to a caught-up state when nothing needs attention.
+- Mobile/small-screen section navigation for jumping directly between **Your space**, **Online**, and **Visitors** without replacing Discourse navigation or loading another route.
 - Responsive dashboard composition: online members remain the primary panel while the signed-in user's profile visitors become a compact secondary panel on wider screens and stack naturally on mobile.
 - Online-member presentation backed by Discourse PresenceChannel data with an additional privacy-safe snapshot filter before output.
 - Separate total-online, displayed-member, and activity-window summaries without changing the existing `users`, `count`, or `window_minutes` contract.
@@ -45,7 +47,8 @@ Privacy and visibility decisions remain on the server:
 - the existing username profile-visit endpoint keeps its visit-recording behavior for profile/theme integrations;
 - the `/community` dashboard only composes the existing authorized presence and current-user visitor responses and does not create a new member discovery or activity API;
 - personal action links navigate to existing Discourse profile/activity/message/notification/bookmark/draft routes and do not copy or prefetch those datasets into Community;
-- attention badges read only the signed-in user's existing current-user counts and do not introduce another serializer, endpoint, polling loop, or permission decision;
+- attention badges and the attention summary read only the signed-in user's existing current-user counts and do not introduce another serializer, endpoint, polling loop, or permission decision;
+- the mobile section navigator uses in-page anchors only and never causes another Community data request;
 - Community search and sorting only transform the authorized snapshot already returned by the server and cannot discover hidden members;
 - density changes are presentation-only and perform no member/visitor request;
 - visitor preview expansion is client-side only and never requests or reveals accounts beyond the already-authorized visitor response;
@@ -61,6 +64,15 @@ Privacy and visibility decisions remain on the server:
 All JSON service endpoints require an authenticated Discourse user. Username-targeted profile-visit endpoints apply Discourse Guardian profile visibility before persistence or serialization. The current-user read endpoint derives its target from `current_user` and never records a visit while loading Community history.
 
 The online response keeps the established `users`, `count`, `window_minutes`, and `generated_at` fields and adds `total_count`, `remaining_count`, and `limit` so clients can distinguish the complete eligible presence snapshot from the configured list cap.
+
+## Version 1.9.0 Highlights
+
+- Added a reactive **Needs your attention** summary above the existing personal shortcut grid using only the already-loaded message, notification, and draft counts from Discourse current-user state.
+- The summary renders direct links only for nonzero categories and switches to a translated caught-up state when all three counts reach zero.
+- Added mobile/small-screen in-page section navigation for **Your space**, **Online**, and **Visitors**; the helper navigation disappears from medium widths upward and never replaces core Discourse navigation.
+- Added stable section anchors and scroll offsets so mobile jumps land cleanly while preserving the existing responsive dashboard composition.
+- Expanded acceptance coverage for attention aggregation, live current-user updates, caught-up behavior, exact section anchors, and the absence of extra Community presence/visitor requests.
+- Added no controller, route, serializer, setting, migration, persistence, Guardian, PresenceChannel, authorization, polling, or tracking-contract change.
 
 ## Version 1.8.0 Highlights
 

@@ -154,6 +154,25 @@ acceptance("Crimson Community dashboard", function (needs) {
     await visit("/community");
 
     assert.dom("[data-test-community-actions]").exists();
+    assert.dom("[data-test-community-section-nav]").exists();
+    assert
+      .dom('[data-test-community-section-nav] a[href="#crimson-community-actions"]')
+      .exists();
+    assert
+      .dom('[data-test-community-section-nav] a[href="#crimson-community-online"]')
+      .exists();
+    assert
+      .dom('[data-test-community-section-nav] a[href="#crimson-community-visitors"]')
+      .exists();
+    assert.dom("[data-test-community-attention]").exists();
+    assert.dom("[data-test-community-attention-total]").includesText("12");
+    assert.dom("[data-test-community-attention-messages]").hasAttribute("href", "/my/messages");
+    assert
+      .dom("[data-test-community-attention-notifications]")
+      .hasAttribute("href", "/u/eviltrout/notifications");
+    assert
+      .dom("[data-test-community-attention-drafts]")
+      .hasAttribute("href", "/u/eviltrout/activity/drafts");
     assert.dom("[data-test-community-action-profile]").hasAttribute("href", "/u/eviltrout");
     assert.dom("[data-test-community-action-posts]").hasAttribute("href", "/my/activity");
     assert.dom("[data-test-community-action-messages]").hasAttribute("href", "/my/messages");
@@ -169,7 +188,7 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.strictEqual(visitorRequestCount, 1, "personal shortcuts do not reload visitors");
   });
 
-  test("updates attention badges from current-user state without Community requests", async function (assert) {
+  test("updates attention state from current-user data without Community requests", async function (assert) {
     resetRequests();
 
     await visit("/community");
@@ -184,6 +203,10 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom("[data-test-community-action-messages-badge]").hasText("4");
     assert.dom("[data-test-community-action-notifications-badge]").hasText("9");
     assert.dom("[data-test-community-action-drafts-badge]").hasText("5");
+    assert.dom("[data-test-community-attention-total]").includesText("18");
+    assert.dom("[data-test-community-attention-messages] .badge-notification").hasText("4");
+    assert.dom("[data-test-community-attention-notifications] .badge-notification").hasText("9");
+    assert.dom("[data-test-community-attention-drafts] .badge-notification").hasText("5");
     assert.strictEqual(onlineRequestCount, 1, "attention changes do not reload presence");
     assert.strictEqual(visitorRequestCount, 1, "attention changes do not reload visitors");
 
@@ -197,6 +220,13 @@ acceptance("Crimson Community dashboard", function (needs) {
     assert.dom("[data-test-community-action-messages-badge]").doesNotExist();
     assert.dom("[data-test-community-action-notifications-badge]").doesNotExist();
     assert.dom("[data-test-community-action-drafts-badge]").doesNotExist();
+    assert.dom("[data-test-community-attention-total]").doesNotExist();
+    assert.dom("[data-test-community-attention-messages]").doesNotExist();
+    assert.dom("[data-test-community-attention-notifications]").doesNotExist();
+    assert.dom("[data-test-community-attention-drafts]").doesNotExist();
+    assert.dom("[data-test-community-attention-empty]").exists();
+    assert.strictEqual(onlineRequestCount, 1, "caught-up state does not reload presence");
+    assert.strictEqual(visitorRequestCount, 1, "caught-up state does not reload visitors");
   });
 
   test("sorts the authorized online snapshot without another request", async function (assert) {
