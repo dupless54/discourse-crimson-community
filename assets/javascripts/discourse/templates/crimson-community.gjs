@@ -96,6 +96,36 @@ class CrimsonCommunityPage extends Component {
       : "/my/activity";
   }
 
+  get notificationsPath() {
+    return this.currentUsername
+      ? `/u/${encodeURIComponent(this.currentUsername)}/notifications`
+      : "/my/activity";
+  }
+
+  get draftsPath() {
+    return this.currentUsername
+      ? `/u/${encodeURIComponent(this.currentUsername)}/activity/drafts`
+      : "/my/activity";
+  }
+
+  get unreadNotificationsCount() {
+    return Math.max(
+      Number(this.currentUser?.all_unread_notifications_count) || 0,
+      0,
+    );
+  }
+
+  get newMessagesCount() {
+    return Math.max(
+      Number(this.currentUser?.new_personal_messages_notifications_count) || 0,
+      0,
+    );
+  }
+
+  get draftsCount() {
+    return Math.max(Number(this.currentUser?.draft_count) || 0, 0);
+  }
+
   get normalizedQuery() {
     return this.query.trim().toLowerCase();
   }
@@ -377,8 +407,53 @@ class CrimsonCommunityPage extends Component {
               {{dIcon "inbox"}}
             </span>
             <span class="crimson-community-actions__copy">
-              <strong>{{i18n "crimson_community.page.quick_action_messages"}}</strong>
+              <strong class="crimson-community-actions__title">
+                <span>{{i18n "crimson_community.page.quick_action_messages"}}</span>
+                {{#if this.newMessagesCount}}
+                  <span
+                    class="badge-notification crimson-community-actions__badge"
+                    aria-label={{i18n
+                      "crimson_community.page.quick_action_messages_badge"
+                      count=this.newMessagesCount
+                    }}
+                    data-test-community-action-messages-badge
+                  >
+                    {{this.newMessagesCount}}
+                  </span>
+                {{/if}}
+              </strong>
               <span>{{i18n "crimson_community.page.quick_action_messages_description"}}</span>
+            </span>
+            <span class="crimson-community-actions__chevron" aria-hidden="true">
+              {{dIcon "chevron-right"}}
+            </span>
+          </a>
+
+          <a
+            class="crimson-community-actions__link"
+            href={{this.notificationsPath}}
+            data-test-community-action-notifications
+          >
+            <span class="crimson-community-actions__icon" aria-hidden="true">
+              {{dIcon "bell"}}
+            </span>
+            <span class="crimson-community-actions__copy">
+              <strong class="crimson-community-actions__title">
+                <span>{{i18n "crimson_community.page.quick_action_notifications"}}</span>
+                {{#if this.unreadNotificationsCount}}
+                  <span
+                    class="badge-notification crimson-community-actions__badge"
+                    aria-label={{i18n
+                      "crimson_community.page.quick_action_notifications_badge"
+                      count=this.unreadNotificationsCount
+                    }}
+                    data-test-community-action-notifications-badge
+                  >
+                    {{this.unreadNotificationsCount}}
+                  </span>
+                {{/if}}
+              </strong>
+              <span>{{i18n "crimson_community.page.quick_action_notifications_description"}}</span>
             </span>
             <span class="crimson-community-actions__chevron" aria-hidden="true">
               {{dIcon "chevron-right"}}
@@ -396,6 +471,37 @@ class CrimsonCommunityPage extends Component {
             <span class="crimson-community-actions__copy">
               <strong>{{i18n "crimson_community.page.quick_action_bookmarks"}}</strong>
               <span>{{i18n "crimson_community.page.quick_action_bookmarks_description"}}</span>
+            </span>
+            <span class="crimson-community-actions__chevron" aria-hidden="true">
+              {{dIcon "chevron-right"}}
+            </span>
+          </a>
+
+          <a
+            class="crimson-community-actions__link"
+            href={{this.draftsPath}}
+            data-test-community-action-drafts
+          >
+            <span class="crimson-community-actions__icon" aria-hidden="true">
+              {{dIcon "pencil"}}
+            </span>
+            <span class="crimson-community-actions__copy">
+              <strong class="crimson-community-actions__title">
+                <span>{{i18n "crimson_community.page.quick_action_drafts"}}</span>
+                {{#if this.draftsCount}}
+                  <span
+                    class="badge-notification crimson-community-actions__badge"
+                    aria-label={{i18n
+                      "crimson_community.page.quick_action_drafts_badge"
+                      count=this.draftsCount
+                    }}
+                    data-test-community-action-drafts-badge
+                  >
+                    {{this.draftsCount}}
+                  </span>
+                {{/if}}
+              </strong>
+              <span>{{i18n "crimson_community.page.quick_action_drafts_description"}}</span>
             </span>
             <span class="crimson-community-actions__chevron" aria-hidden="true">
               {{dIcon "chevron-right"}}
